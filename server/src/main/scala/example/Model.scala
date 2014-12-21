@@ -22,10 +22,16 @@ object TableModel {
   // The query interface for the Suppliers table
   val users: TableQuery[Users] = TableQuery[Users]
 
-  val db = Database.forURL("jdbc:h2:mem:hello", driver = "org.h2.Driver")
+  lazy val db = Database.forURL("jdbc:h2:mem:hello;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
 
+  db.withSession{ implicit session =>
+    users.ddl.create
+    users += User("aurelius")
+  }
 
-  def create():Unit = {};//db.withSession(implicit session => users.ddl.create)
-  def list2:List[User] = List(User("jedan"), User("drugi"))//db.withSession(implicit session => users.list)
+  def list2:List[User] = db.withSession{ implicit session =>
+    users.list
+  }
+
 
 }
