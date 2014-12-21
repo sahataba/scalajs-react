@@ -17,6 +17,7 @@ object Template{
         meta(httpEquiv:="Content-Type", content:="text/html; charset=UTF-8"),
         script(`type`:="text/javascript", src:="/client-fastopt.js"),
         script(`type`:="text/javascript", src:="//localhost:12345/workbench.js"),
+        script(`type` := "text/javascript", src:="http://fb.me/react-0.12.1.js"),
         link(
           rel:="stylesheet",
           `type`:="text/css",
@@ -24,7 +25,8 @@ object Template{
         )
       ),
       body(margin:=0)(
-        script("ScalaJSExample().main()")
+        div(id:="eg1"),
+        script("ReactExamples().main()")
       )
     )
 }

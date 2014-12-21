@@ -22,9 +22,11 @@ val client = cross.js.in(file("client"))
                     .settings(
   name := "Client",
   libraryDependencies ++= Seq(
-    "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6"
+    "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
+    "com.github.japgolly.scalajs-react" %%% "core" % "0.6.1"
   ),
-  bootSnippet := "ScalaJSExample().main();"
+  //jsDependencies += "org.webjars" % "react" % "0.12.1" / "react-with-addons.js" commonJSName "React",
+  bootSnippet := "ReactExample().main();"
 )
 
 val server = cross.jvm.in(file("server"))
