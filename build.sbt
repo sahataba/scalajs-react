@@ -39,7 +39,8 @@ val server = cross.jvm.in(file("server"))
     "org.webjars" % "bootstrap" % "3.2.0",
     "com.typesafe.slick" %% "slick" % "2.1.0",
     "org.slf4j" % "slf4j-nop" % "1.6.4",
-    "com.h2database" % "h2" % "1.3.170"
+    "com.h2database" % "h2" % "1.3.170",
+    "org.flywaydb" % "flyway-core" % "3.0"
   ),
   (resources in Compile) += {
     (fastOptJS in (client, Compile)).value
