@@ -3,6 +3,7 @@ import upickle._
 import spray.routing.SimpleRoutingApp
 import akka.actor.ActorSystem
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 import spray.http.{MediaTypes, HttpEntity}
 
 object Template{
@@ -60,10 +61,7 @@ object Server extends SimpleRoutingApp with Api{
     }
   }
 
-  def list(path: String): Seq[String] = {
-    val chunks = path.split("/", -1)
-    val prefix = "./" + chunks.dropRight(1).mkString("/")
-    val files = Option(new java.io.File(prefix).list()).toSeq.flatten
-    files.filter(_.startsWith(chunks.last))
+  def list(path: String): Seq[User] = {
+    TableModel.list2
   }
 }

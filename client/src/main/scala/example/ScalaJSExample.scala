@@ -24,17 +24,17 @@ object Client extends autowire.Client[String, upickle.Reader, upickle.Writer]{
 object ScalaJSExample {
   @JSExport
   def main(): Unit = {
-    
+
     val inputBox = input.render
     val outputBox = div.render
 
     def updateOutput() = {
-      Client[Api].list(inputBox.value).call().foreach { paths =>
+      Client[Api].list(inputBox.value).call().map { users =>
         outputBox.innerHTML = ""
         outputBox.appendChild(
           ul(
-            for(path <- paths) yield {
-              li(path)
+            for(user <- users) yield {
+              li(user.name)
             }
           ).render
         )
