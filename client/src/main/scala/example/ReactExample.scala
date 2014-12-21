@@ -5,8 +5,10 @@ import japgolly.scalajs.react._
 import vdom.ReactVDom._
 import all._
 
+import example._
+
 @JSExport
-object ReactExamples extends {
+object ReactExamples {
 
   @JSExport
   def main(): Unit = {
@@ -23,33 +25,36 @@ object ReactExamples extends {
 
 
   //todo example
-  val TodoList = ReactComponentB[List[String]]("TodoList")
+  val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
-    def createItem(itemText: String) = li(itemText)
+    def createItem(user: User) = li(user.name)
     ul(P map createItem)
   })
   .build
 
-  case class State(items: List[String], text: String)
+  case class State(users: List[User], text: String)
 
   class Backend(t: BackendScope[Unit, State]) {
     def onChange(e: ReactEventI) =
       t.modState(_.copy(text = e.target.value))
     def handleSubmit(e: ReactEventI) = {
       e.preventDefault()
-      t.modState(s => State(s.items :+ s.text, ""))
+      t.modState(s => State(s.users :+ User(s.text), ""))
     }
   }
+
+  //val initial = example.Client[example.Api].list("").toList
+
   val TodoApp = ReactComponentB[Unit]("TodoApp")
     .initialState(State(Nil, ""))
     .backend(new Backend(_))
     .render((_,S,B) =>
     div(
       h3("TODO"),
-      TodoList(S.items),
+      TodoList(S.users),
       form(onsubmit ==> B.handleSubmit)(
         input(onchange ==> B.onChange, value := S.text),
-        button("Add #", S.items.length + 1)
+        button("Add #", S.users.length + 1)
       )
     )
   ).buildU
