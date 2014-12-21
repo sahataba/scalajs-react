@@ -1,6 +1,6 @@
 package example
 
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.H2Driver.api._
 
 import scala.slick.lifted.{ProvenShape, ForeignKeyQuery}
 import scala.concurrent._
@@ -24,14 +24,11 @@ object TableModel {
 
   lazy val db = Database.forURL("jdbc:h2:mem:hello;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
 
-  db.withSession{ implicit session =>
-    users.ddl.create
+  db.run(Action.seq(
+    users.ddl.create,
     users += User("aurelius")
-  }
+  ))
 
-  def list2:List[User] = db.withSession{ implicit session =>
-    users.list
-  }
-
+  def list2:Future[Seq[User]] = db.run(users.result)
 
 }
