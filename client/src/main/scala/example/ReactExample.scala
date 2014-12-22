@@ -80,7 +80,7 @@ object ReactExamples {
         )
       )
     ).componentDidMount(scope => {
-      val fetched = Client[example.Api].list("").call().map(_.toList)
+      val fetched = Client[example.Api].users().call().map(_.toList)
       fetched.map( users =>
         scope.modState(_ => State(users, ""))
       )

@@ -63,7 +63,7 @@ object Server extends SimpleRoutingApp with Api{
     }
   }
 
-  def list(path: String): Future[Seq[User]] = {
+  def users: Future[Seq[User]] = {
     TableModel.list2
   }
 }
