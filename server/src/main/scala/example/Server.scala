@@ -70,4 +70,8 @@ object Server extends SimpleRoutingApp with Api{
   def createUser(user:User):Future[User] = {
     TableModel.createUser(user).map(_ => user)
   }
+
+  def removeUser(id:Int):Future[Unit] = {
+   TableModel.removeUser(Some(id)).map(a => ())
+  }
 }

@@ -44,7 +44,7 @@ object ReactExamples {
       Client[example.Api].createUser(user).call().map(u => store() = store().copy(users = store().users ++ List(u)))
     }
     def removeUser(user:User) = {
-      store() = store().copy(users = users.filter( _ != user))
+      Client[example.Api].removeUser(user.id.get).call().map(_ => store() = store().copy(users = users.filter( _ != user)))
     }
   }
 
@@ -77,13 +77,13 @@ object ReactExamples {
 
   val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
-    ul(P.map{(u:User) => TodoItem(u)})
+    table(border:="1px solid black;")(P.map{(u:User) => TodoItem(u)})
   })
   .build
 
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
-    li(button(onclick ==> handleSubmit2(P))("X"),"Name: " + P.name, "Email: " + P.email)
+    tr(td(button(onclick ==> handleSubmit2(P))("X")),td("ID: " + P.id, "Name: " + P.name, "Email: " + P.email))
   })
   .build
 
