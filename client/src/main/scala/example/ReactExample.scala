@@ -77,11 +77,15 @@ object ReactExamples {
 
   val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
-    def createItem(user: User) = li(button(onclick ==> handleSubmit2(user))("X"),user.name)
-    ul(P map createItem)
+    ul(P.map{(u:User) => TodoItem(u)})
   })
   .build
 
+  val TodoItem = ReactComponentB[User]("TodoItem")
+  .render(P => {
+    li(button(onclick ==> handleSubmit2(P))("X"),P.name)
+  })
+  .build
 
   case class State(text: String)
 
