@@ -15,6 +15,8 @@ import example._
 import upickle._
 import autowire._
 
+import rx._
+
 @JSExport
 object Client extends autowire.Client[String, upickle.Reader, upickle.Writer]{
   override def doCall(req: Request): Future[String] = {
@@ -36,13 +38,31 @@ object ReactExamples {
   def main(): Unit = {
     example1(document getElementById "eg1")
   }
+
+  case class AppState(var users:List[User]) {
+    def createUser(name:String) = {
+      Client[example.Api].createUser(name).call().map(u => store() = store().copy(users = store().users ++ List(u)))
+    }
+  }
+
+  Client[example.Api].users().call().map(_.toList).map{t =>
+    store() = store().copy(users = t)
+  }
+
+
+  val store = Var(AppState(List(User("rudi"), User("miha"))));
+
   // ===================================================================================================================
   // Scala version of "A Simple Component" on http://facebook.github.io/react/
   def example1(mountNode: Node) = {
     val HelloMessage = ReactComponentB[String]("HelloMessage")
     .render(name => div("Hello ", name))
     .build
-    React.renderComponent(TodoApp(), mountNode)
+    //React.renderComponent(TodoApp(), mountNode)
+    Obs(store){
+      console.log("render")
+      React.renderComponent(TodoApp(store()), mountNode)
+    }
   }
 
 
@@ -54,36 +74,37 @@ object ReactExamples {
   })
   .build
 
-  case class State(users: List[User], text: String)
 
-  class Backend(t: BackendScope[Unit, State]) {
-    def onChange(e: ReactEventI) =
+  case class State(text: String)
+
+  class Backend(t: BackendScope[AppState, State]) {
+    def onChange(e: ReactEventI) = {
+      console.log("CC" + e.target)
       t.modState(_.copy(text = e.target.value))
+    }
     def handleSubmit(e: ReactEventI) = {
       e.preventDefault()
-      t.modState(s => State(s.users :+ User(s.text), ""))
+      console.log("KK" + t.state)
+      //a() = a().copy(users = a().users ++ List(User(t.state.text)))
+      store().createUser(t.state.text)
+      t.modState(s => State(""))
     }
   }
 
-  val TodoApp = ReactComponentB[Unit]("TodoApp")
-    .getInitialState(p => {
-      State(List(User("Iva"), User("Maja")), "")
-    })
+  val myRef = Ref[HTMLInputElement]("refKey")
+
+  val TodoApp = ReactComponentB[AppState]("TodoApp")
+    .initialState(State(""))
     .backend(new Backend(_))
-    .render((_,S,B) =>
+    .render((P, S, B) =>
       div(
         h3("TODO"),
-        TodoList(S.users),
+        TodoList(P.users),
         form(onsubmit ==> B.handleSubmit)(
-          input(onchange ==> B.onChange, value := S.text),
-          button("Add #", S.users.length + 1)
+          input(id:= "refKey", onchange ==> B.onChange, value := S.text),
+          button("Add #", P.users.length + 1)
         )
       )
-    ).componentDidMount(scope => {
-      val fetched = Client[example.Api].users().call().map(_.toList)
-      fetched.map( users =>
-        scope.modState(_ => State(users, ""))
-      )
-    }).buildU
+    ).build
 
 }

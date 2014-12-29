@@ -13,7 +13,8 @@ val cross = new utest.jsrunner.JsCrossBuild(
   libraryDependencies ++= Seq(
     "com.lihaoyi" %%% "upickle" % "0.2.5",
     "com.lihaoyi" %%% "autowire" % "0.2.3",
-    "com.scalatags" %%% "scalatags" % "0.4.2"
+    "com.scalatags" %%% "scalatags" % "0.4.2",
+    "com.scalarx" %%% "scalarx" % "0.2.6"
   )
 )
 val client = cross.js.in(file("client"))
