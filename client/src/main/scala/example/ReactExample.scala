@@ -40,8 +40,8 @@ object ReactExamples {
   }
 
   case class AppState(var users:List[User]) {
-    def createUser(name:String):Future[Unit] = {
-      Client[example.Api].createUser(name).call().map(u => store() = store().copy(users = store().users ++ List(u)))
+    def createUser(user:User):Future[Unit] = {
+      Client[example.Api].createUser(user).call().map(u => store() = store().copy(users = store().users ++ List(u)))
     }
     def removeUser(user:User) = {
       store() = store().copy(users = users.filter( _ != user))
@@ -53,7 +53,7 @@ object ReactExamples {
   }
 
 
-  val store = Var(AppState(List(User("rudi"), User("miha"))));
+  val store = Var(AppState(List()));
 
   // ===================================================================================================================
   // Scala version of "A Simple Component" on http://facebook.github.io/react/
@@ -83,36 +83,42 @@ object ReactExamples {
 
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
-    li(button(onclick ==> handleSubmit2(P))("X"),P.name)
+    li(button(onclick ==> handleSubmit2(P))("X"),"Name: " + P.name, "Email: " + P.email)
   })
   .build
 
-  case class State(text: String)
+  //case class State(usr:User)
 
-  class Backend(t: BackendScope[AppState, State]) {
-    def onChange(e: ReactEventI) = {
-      console.log("CC" + e.target)
-      t.modState(_.copy(text = e.target.value))
+  class Backend(t: BackendScope[AppState, User]) {
+    def onChangeName(e: ReactEventI) = {
+      t.modState(user => user.copy(name = e.target.value))
     }
+    def onChangeEmail(e: ReactEventI) = {
+      t.modState(user => user.copy(email = e.target.value))
+    }
+
     def handleSubmit(e: ReactEventI) = {
       e.preventDefault()
       console.log("KK" + t.state)
       //a() = a().copy(users = a().users ++ List(User(t.state.text)))
-      store().createUser(t.state.text).foreach(_ => t.modState(s => State("b")))
+      store().createUser(t.state).foreach(_ => t.modState(s => dummyUser))
     }
   }
 
   val myRef = Ref[HTMLInputElement]("refKey")
 
+  val dummyUser = User(id = None, name = "", email = "")
+
   val TodoApp = ReactComponentB[AppState]("TodoApp")
-    .initialState(State(""))
+    .initialState(dummyUser)
     .backend(new Backend(_))
     .render((P, S, B) =>
       div(
         h3("TODO"),
         TodoList(P.users),
         form(onsubmit ==> B.handleSubmit)(
-          input(id:= "refKey", onchange ==> B.onChange, value := S.text),
+          input(id:= "refKey", onchange ==> B.onChangeName, value := S.name),
+          input(id:= "refKeyEmail", onchange ==> B.onChangeEmail, value := S.email),
           button("Add #", P.users.length + 1)
         )
       )

@@ -67,8 +67,7 @@ object Server extends SimpleRoutingApp with Api{
     TableModel.list2
   }
 
-  def createUser(name:String):Future[User] = {
-    val usr = User(name)
-    TableModel.createUser(usr).map(_ => usr)
+  def createUser(user:User):Future[User] = {
+    TableModel.createUser(user).map(_ => user)
   }
 }

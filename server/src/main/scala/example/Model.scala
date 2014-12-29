@@ -11,9 +11,11 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
   // The name can't be null
   def name = column[String]("NAME", O.NotNull)
+  def email = column[String]("EMAIL", O.NotNull)
+
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
-  def * = (name, id.?) <> (User.tupled, User.unapply)
+  def * = (name, id.?, email) <> (User.tupled, User.unapply)
 }
 
 // The main application
@@ -26,7 +28,7 @@ object TableModel {
 
   db.run(Action.seq(
     users.ddl.create,
-    users += User("aurelius")
+    users += User(name = "aurelius", email = "great road")
   ))
 
   def list2:Future[Seq[User]] = db.run(users.result)
