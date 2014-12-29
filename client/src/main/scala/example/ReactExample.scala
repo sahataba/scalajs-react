@@ -8,7 +8,7 @@ import scalajs.concurrent.JSExecutionContext.Implicits.runNow
 
 import japgolly.scalajs.react._
 import vdom.ReactVDom._
-import all._
+import japgolly.scalajs.react.vdom.ReactVDom.all._
 
 import example._
 
@@ -40,8 +40,11 @@ object ReactExamples {
   }
 
   case class AppState(var users:List[User]) {
-    def createUser(name:String) = {
+    def createUser(name:String):Future[Unit] = {
       Client[example.Api].createUser(name).call().map(u => store() = store().copy(users = store().users ++ List(u)))
+    }
+    def removeUser(user:User) = {
+      store() = store().copy(users = users.filter( _ != user))
     }
   }
 
@@ -67,9 +70,14 @@ object ReactExamples {
 
 
   //todo example
+  def handleSubmit2(user:User)(e: ReactEventI) = {
+    e.preventDefault()
+    store().removeUser(user)
+  }
+
   val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
-    def createItem(user: User) = li(user.name)
+    def createItem(user: User) = li(button(onclick ==> handleSubmit2(user))("X"),user.name)
     ul(P map createItem)
   })
   .build
@@ -86,8 +94,7 @@ object ReactExamples {
       e.preventDefault()
       console.log("KK" + t.state)
       //a() = a().copy(users = a().users ++ List(User(t.state.text)))
-      store().createUser(t.state.text)
-      t.modState(s => State(""))
+      store().createUser(t.state.text).foreach(_ => t.modState(s => State("b")))
     }
   }
 
