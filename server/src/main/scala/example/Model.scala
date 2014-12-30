@@ -32,6 +32,6 @@ object TableModel {
   ))
 
   def list2:Future[Seq[User]] = db.run(users.result)
-  def createUser(user:User) = db.run(users += user)
+  def createUser(user:User):Future[Int] = db.run((users returning users.map(_.id)) += user)
   def removeUser(id:Option[Int]) = db.run(users.filter(_.id === id).delete)
 }
