@@ -6,9 +6,8 @@ import scala.concurrent.{Future,Await}
 import scala.concurrent.duration._
 import scalajs.concurrent.JSExecutionContext.Implicits.runNow
 
+import japgolly.scalajs.react.vdom.all._
 import japgolly.scalajs.react._
-import vdom.ReactVDom._
-import japgolly.scalajs.react.vdom.ReactVDom.all._
 
 import example._
 
@@ -58,6 +57,11 @@ object ReactExamples {
     store() = store().copy(users = t)
   }
 
+  /*
+  object dispatcher {
+    var state:AppState = Await.result(Client[example.Api].users().call().map(_.toList).map(users => AppState(users = users)), 2 seconds)
+    console.log("TTTT " + state)
+  }*/
 
   val store = Var(AppState(List()));
 
@@ -70,6 +74,7 @@ object ReactExamples {
     //React.renderComponent(TodoApp(), mountNode)
     Obs(store){
       console.log("render")
+      //dispatcher.state
       React.renderComponent(TodoApp(store()), mountNode)
     }
   }
@@ -89,7 +94,7 @@ object ReactExamples {
 
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
-    tr(td(button(onclick ==> handleSubmit2(P))("X")),td("ID: " + P.id, "Name: " + P.name, "Email: " + P.email))
+    tr(td(button(onClick ==> handleSubmit2(P))("X")),td("ID: " + P.id, "Name: " + P.name, "Email: " + P.email))
   })
   .build
 
@@ -122,9 +127,9 @@ object ReactExamples {
       div(
         h3("TODO"),
         TodoList(P.users),
-        form(onsubmit ==> B.handleSubmit)(
-          input(id:= "refKey", onchange ==> B.onChangeName, value := S.name),
-          input(id:= "refKeyEmail", onchange ==> B.onChangeEmail, value := S.email),
+        form(onSubmit ==> B.handleSubmit)(
+          input(id:= "refKey", onChange ==> B.onChangeName, value := S.name),
+          input(id:= "refKeyEmail", onChange ==> B.onChangeEmail, value := S.email),
           button("Add #", P.users.length + 1)
         )
       )
