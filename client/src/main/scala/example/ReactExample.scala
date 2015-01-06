@@ -17,6 +17,7 @@ import autowire._
 import rx._
 
 import monocle.syntax._
+import monocle._
 
 @JSExport
 object Client extends autowire.Client[String, upickle.Reader, upickle.Writer]{
@@ -109,14 +110,8 @@ object ReactExamples {
   //case class State(usr:User)
 
   class Backend(t: BackendScope[AppState, User]) {
-    def onChangeFirstName(e: ReactEventI) = {
-      t.modState(User._firstName set e.target.value)
-    }
-    def onChangeLastName(e: ReactEventI) = {
-      t.modState(User._lastName set e.target.value)
-    }
-    def onChangeEmail(e: ReactEventI) = {
-      t.modState(User._email set e.target.value)
+    def onFieldChange(f : Lens[User,String])(e: ReactEventI) = {
+      t.modState(f set e.target.value)
     }
 
     def handleSubmit(e: ReactEventI) = {
@@ -138,10 +133,10 @@ object ReactExamples {
         TodoList(P.users),
         form(onSubmit ==> B.handleSubmit)(
           "FirstName: ",
-          input(id:= "refKey", onChange ==> B.onChangeFirstName, value := S.firstName),
+          input(onChange ==> B.onFieldChange(User._firstName), value := S.firstName),
           "Lastname: ",
-          input(id:= "refKeyEmail4", onChange ==> B.onChangeLastName, value := S.lastName),
-          input(id:= "refKeyEmail", onChange ==> B.onChangeEmail, value := S.email),
+          input(onChange ==> B.onFieldChange(User._lastName), value := S.lastName),
+          input(onChange ==> B.onFieldChange(User._email), value := S.email),
           button("Add #", P.users.length + 1)
         )
       )
