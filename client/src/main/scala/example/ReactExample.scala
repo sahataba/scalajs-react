@@ -16,6 +16,8 @@ import autowire._
 
 import rx._
 
+import monocle.syntax._
+
 @JSExport
 object Client extends autowire.Client[String, upickle.Reader, upickle.Writer]{
   override def doCall(req: Request): Future[String] = {
@@ -102,10 +104,11 @@ object ReactExamples {
 
   class Backend(t: BackendScope[AppState, User]) {
     def onChangeName(e: ReactEventI) = {
-      t.modState(user => user.copy(name = e.target.value))
+
+      t.modState(user => user applyLens UserLenses.name set e.target.value)
     }
     def onChangeEmail(e: ReactEventI) = {
-      t.modState(user => user.copy(email = e.target.value))
+      t.modState(user => user applyLens UserLenses.email set e.target.value)
     }
 
     def handleSubmit(e: ReactEventI) = {
