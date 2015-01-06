@@ -95,15 +95,20 @@ object ReactExamples {
   })
   .build
 
+  val todoItemFields:List[(String, User => String)] = List(
+    ("id: ", (user:User) => User._id.get(user).toString),
+    ("name: ", User._name get),
+    ("email: ", User._email get),
+    ("birthday: ", (user:User) => User._birthday.get(user).toString),
+    ("role: ", (user:User) => User._role.get(user).toString))
+
+  def tds(user:User) = todoItemFields.map{case (name,lns) => td(name + lns(user))}
+
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
     tr(
       td(button(onClick ==> handleSubmit2(P))("X")),
-      td("ID: " + P.id),
-      td("Name: " + User._name.get(P)),
-      td("Email: " + P.email),
-      td(P.birthday.toString),
-      td("Role: " + P.role))
+      tds(P))
   })
   .build
 
