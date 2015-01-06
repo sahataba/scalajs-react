@@ -94,7 +94,7 @@ object ReactExamples {
 
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
-    tr(td(button(onClick ==> handleSubmit2(P))("X")),td("ID: " + P.id, "Name: " + P.name, "Email: " + P.email, P.birthday.toString))
+    tr(td(button(onClick ==> handleSubmit2(P))("X")),td("ID: " + P.id, "Name: " + P.name, "Email: " + P.email, P.birthday.toString, "Role: " + P.role))
   })
   .build
 

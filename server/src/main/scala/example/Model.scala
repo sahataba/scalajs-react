@@ -14,16 +14,22 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
   { utc => Date(utc) } // map Int to Bool
   )
 
+  implicit val boolColumnType2 = MappedColumnType.base[example.Role, String](
+  { case Admin => "admin"},    // map Bool to Int
+  { case "admin" => Admin } // map Int to Bool
+  )
+
   // Auto Increment the id primary key column
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
   // The name can't be null
   def name = column[String]("NAME", O.NotNull)
   def email = column[String]("EMAIL", O.NotNull)
   def birthday = column[Date]("BIRTHDAY", O.NotNull)
+  def role = column[example.Role]("ROLE", O.NotNull)
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
-  def * = (name, id.?, email, birthday) <> ((User.apply _).tupled, User.unapply)
+  def * = (name, id.?, email, birthday, role) <> ((User.apply _).tupled, User.unapply)
 }
 
 // The main application
@@ -36,7 +42,7 @@ object TableModel {
 
   db.run(Action.seq(
     users.ddl.create,
-    users += User(name = "aurelius", email = "great road", birthday = example.Date(1l))
+    users += User(name = "aurelius", email = "great road", birthday = example.Date(1l), role = Admin)
   ))
 
   def list2:Future[Seq[User]] = db.run(users.result)
