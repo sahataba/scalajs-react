@@ -5,12 +5,6 @@ import scala.concurrent._
 import monocle.macros.{Lenser, Lenses}
 import monocle.syntax._
 
-object UserLenses {
-  val lenser = Lenser[User]
-  val name = lenser(_.name)
-  val email = lenser(_.email)
-}
-
 case class Date(utc:Long) extends AnyVal
 
 sealed trait Role
@@ -20,6 +14,9 @@ case class User(name: String, id: Option[Int] = None, email:String, birthday:Dat
 
 object User {
   def dummy():User =  User(id = None, name = "", email = "", birthday = Date(1l), role = Admin)
+  val lenser = Lenser[User]
+  val _name = lenser(_.name)
+  val _email = lenser(_.email)
 }
 
 trait Api{

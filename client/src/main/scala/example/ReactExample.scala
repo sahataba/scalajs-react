@@ -96,7 +96,13 @@ object ReactExamples {
 
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
-    tr(td(button(onClick ==> handleSubmit2(P))("X")),td("ID: " + P.id, "Name: " + P.name, "Email: " + P.email, P.birthday.toString, "Role: " + P.role))
+    tr(
+      td(button(onClick ==> handleSubmit2(P))("X")),
+      td("ID: " + P.id),
+      td("Name: " + P.name),
+      td("Email: " + P.email),
+      td(P.birthday.toString),
+      td("Role: " + P.role))
   })
   .build
 
@@ -104,10 +110,10 @@ object ReactExamples {
 
   class Backend(t: BackendScope[AppState, User]) {
     def onChangeName(e: ReactEventI) = {
-      t.modState(UserLenses.name set e.target.value)
+      t.modState(User._name set e.target.value)
     }
     def onChangeEmail(e: ReactEventI) = {
-      t.modState(UserLenses.email set e.target.value)
+      t.modState(User._email set e.target.value)
     }
 
     def handleSubmit(e: ReactEventI) = {
