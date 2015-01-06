@@ -99,7 +99,7 @@ object ReactExamples {
     tr(
       td(button(onClick ==> handleSubmit2(P))("X")),
       td("ID: " + P.id),
-      td("Name: " + P.name),
+      td("Name: " + User._name.get(P)),
       td("Email: " + P.email),
       td(P.birthday.toString),
       td("Role: " + P.role))
@@ -109,8 +109,11 @@ object ReactExamples {
   //case class State(usr:User)
 
   class Backend(t: BackendScope[AppState, User]) {
-    def onChangeName(e: ReactEventI) = {
-      t.modState(User._name set e.target.value)
+    def onChangeFirstName(e: ReactEventI) = {
+      t.modState(User._firstName set e.target.value)
+    }
+    def onChangeLastName(e: ReactEventI) = {
+      t.modState(User._lastName set e.target.value)
     }
     def onChangeEmail(e: ReactEventI) = {
       t.modState(User._email set e.target.value)
@@ -134,7 +137,10 @@ object ReactExamples {
         h3("TODO"),
         TodoList(P.users),
         form(onSubmit ==> B.handleSubmit)(
-          input(id:= "refKey", onChange ==> B.onChangeName, value := S.name),
+          "FirstName: ",
+          input(id:= "refKey", onChange ==> B.onChangeFirstName, value := S.firstName),
+          "Lastname: ",
+          input(id:= "refKeyEmail4", onChange ==> B.onChangeLastName, value := S.lastName),
           input(id:= "refKeyEmail", onChange ==> B.onChangeEmail, value := S.email),
           button("Add #", P.users.length + 1)
         )
