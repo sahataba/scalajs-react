@@ -23,7 +23,7 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
-  def * = (name, id.?, email, birthday) <> (User.tupled, User.unapply)
+  def * = (name, id.?, email, birthday) <> ((User.apply _).tupled, User.unapply)
 }
 
 // The main application

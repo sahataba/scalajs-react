@@ -112,16 +112,14 @@ object ReactExamples {
       e.preventDefault()
       console.log("KK" + t.state)
       //a() = a().copy(users = a().users ++ List(User(t.state.text)))
-      store().createUser(t.state).foreach(_ => t.modState(s => dummyUser))
+      store().createUser(t.state).foreach(_ => t.modState(s => User.dummy()))
     }
   }
 
   val myRef = Ref[HTMLInputElement]("refKey")
 
-  val dummyUser = User(id = None, name = "", email = "", birthday = Date(1l))
-
   val TodoApp = ReactComponentB[AppState]("TodoApp")
-    .initialState(dummyUser)
+    .initialState(User.dummy())
     .backend(new Backend(_))
     .render((P, S, B) =>
       div(
