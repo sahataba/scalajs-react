@@ -127,7 +127,10 @@ object ReactExamples {
     }
   }
 
-  val myRef = Ref[HTMLInputElement]("refKey")
+  def inputs = List(
+    ("First Name: ", User._firstName),
+    ("Last Name: ", User._lastName),
+    ("Email: ", User._email))
 
   val TodoApp = ReactComponentB[AppState]("TodoApp")
     .initialState(User.dummy())
@@ -137,11 +140,7 @@ object ReactExamples {
         h3("TODO"),
         TodoList(P.users),
         form(onSubmit ==> B.handleSubmit)(
-          "FirstName: ",
-          input(onChange ==> B.onFieldChange(User._firstName), value := S.firstName),
-          "Lastname: ",
-          input(onChange ==> B.onFieldChange(User._lastName), value := S.lastName),
-          input(onChange ==> B.onFieldChange(User._email), value := S.email),
+          inputs map (att => div(label(att._1),input(onChange ==> B.onFieldChange(att._2), value := att._2.get(S)))),
           button("Add #", P.users.length + 1)
         )
       )
