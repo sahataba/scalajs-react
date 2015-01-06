@@ -90,7 +90,7 @@ object ReactExamples {
 
   val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
-    table(border:="1px solid black;")(P.map{(u:User) => TodoItem(u)})
+    table(border:="1px solid black;")(P.map{TodoItem(_)})
   })
   .build
 
@@ -104,11 +104,10 @@ object ReactExamples {
 
   class Backend(t: BackendScope[AppState, User]) {
     def onChangeName(e: ReactEventI) = {
-
-      t.modState(user => user applyLens UserLenses.name set e.target.value)
+      t.modState(UserLenses.name set e.target.value)
     }
     def onChangeEmail(e: ReactEventI) = {
-      t.modState(user => user applyLens UserLenses.email set e.target.value)
+      t.modState(UserLenses.email set e.target.value)
     }
 
     def handleSubmit(e: ReactEventI) = {
