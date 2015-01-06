@@ -2,7 +2,9 @@ package example
 
 import scala.concurrent._
 
-case class User(name: String, id: Option[Int] = None, email:String)
+case class Date(utc:Long) extends AnyVal
+
+case class User(name: String, id: Option[Int] = None, email:String, birthday:Date)
 
 trait Api{
   def users(): Future[Seq[User]]

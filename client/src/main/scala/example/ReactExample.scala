@@ -94,7 +94,7 @@ object ReactExamples {
 
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
-    tr(td(button(onClick ==> handleSubmit2(P))("X")),td("ID: " + P.id, "Name: " + P.name, "Email: " + P.email))
+    tr(td(button(onClick ==> handleSubmit2(P))("X")),td("ID: " + P.id, "Name: " + P.name, "Email: " + P.email, P.birthday.toString))
   })
   .build
 
@@ -118,7 +118,7 @@ object ReactExamples {
 
   val myRef = Ref[HTMLInputElement]("refKey")
 
-  val dummyUser = User(id = None, name = "", email = "")
+  val dummyUser = User(id = None, name = "", email = "", birthday = Date(1l))
 
   val TodoApp = ReactComponentB[AppState]("TodoApp")
     .initialState(dummyUser)

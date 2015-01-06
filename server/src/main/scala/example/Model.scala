@@ -7,15 +7,23 @@ import scala.concurrent._
 import scala.concurrent.duration._
 
 class Users(tag: Tag) extends Table[User](tag, "USERS") {
+
+  // And a ColumnType that maps it to Int values 1 and 0
+  implicit val boolColumnType = MappedColumnType.base[Date, Long](
+  { b => b.utc},    // map Bool to Int
+  { utc => Date(utc) } // map Int to Bool
+  )
+
   // Auto Increment the id primary key column
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
   // The name can't be null
   def name = column[String]("NAME", O.NotNull)
   def email = column[String]("EMAIL", O.NotNull)
+  def birthday = column[Date]("BIRTHDAY", O.NotNull)
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
-  def * = (name, id.?, email) <> (User.tupled, User.unapply)
+  def * = (name, id.?, email, birthday) <> (User.tupled, User.unapply)
 }
 
 // The main application
@@ -28,7 +36,7 @@ object TableModel {
 
   db.run(Action.seq(
     users.ddl.create,
-    users += User(name = "aurelius", email = "great road")
+    users += User(name = "aurelius", email = "great road", birthday = example.Date(1l))
   ))
 
   def list2:Future[Seq[User]] = db.run(users.result)
