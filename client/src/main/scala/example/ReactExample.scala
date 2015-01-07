@@ -73,10 +73,8 @@ object ReactExamples {
 
   val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
-    table(border:="1px solid black;")(
-      ReactCssTransitionGroup("example", component = "h3")(
-        P.map{TodoItem(_)}
-      )
+    ReactCssTransitionGroup("example",  component = "table")(
+      P.map{TodoItem(_)}
     )
   })
   .build
@@ -88,12 +86,12 @@ object ReactExamples {
     ("birthday: ", (user:User) => User._birthday.get(user).toString),
     ("role: ", Role.write _ compose (User._role get)))
 
-  def tds(user:User) = todoItemFields.map{case (name,lns) => td(border:="1px solid black;")(name + lns(user))}
+  def tds(user:User) = todoItemFields.map{case (name,lns) => td(name + lns(user))}
 
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
     tr(key := P.id.get.toString)(
-      td(border:="1px solid black;")(button(onClick ==> handleSubmit2(P))("X")),
+      td(button(onClick ==> handleSubmit2(P))("X")),
       tds(P))
   })
   .build
