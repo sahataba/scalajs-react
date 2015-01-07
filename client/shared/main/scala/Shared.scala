@@ -21,6 +21,7 @@ object Role {
     case Admin => "admin"
     case Member => "member"
   }
+  val values = List(Admin, Member)
 }
 
 case class User(

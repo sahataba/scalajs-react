@@ -125,7 +125,12 @@ object ReactExamples {
         TodoList(P.users),
         form(onSubmit ==> B.handleSubmit)(
           inputs map (att => div(label(att._1),input(onChange ==> B.onFieldChange(att._2), value := att._2.get(S)))),
-          div(label("Role: "),input(onChange ==> B.onEnumChange(User._role, Role.parse), value := Role.write(S.role))),
+          div(
+            label("Role: "),
+            select(onChange ==> B.onEnumChange(User._role, Role.parse), value := Role.write(S.role))(
+              Role.values.map(role => option(value:=Role.write(role))(role.toString))
+            )
+          ),
           button("Add #", P.users.length + 1)
         )
       )
