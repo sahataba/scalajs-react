@@ -10,6 +10,18 @@ case class Date(utc:Long) extends AnyVal
 
 sealed trait Role
 case object Admin extends Role
+case object Member extends Role
+
+object Role {
+  def parse(value:String):Role = value match {
+    case "admin" => Admin
+    case "member" => Member
+  }
+  def write(role:Role):String = role match {
+    case Admin => "admin"
+    case Member => "member"
+  }
+}
 
 case class User(
                  firstName: String,

@@ -2,7 +2,7 @@ package example
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
-import org.scalajs.dom.{HTMLInputElement, console, document, window, Node}
+import org.scalajs.dom.{console, document, Node}
 
 import scala.concurrent.{Future,Await}
 import scala.concurrent.duration._
@@ -11,9 +11,6 @@ import scalajs.concurrent.JSExecutionContext.Implicits.runNow
 import japgolly.scalajs.react.vdom.all._
 import japgolly.scalajs.react._
 
-import example._
-
-import upickle._
 import autowire._
 
 import rx._
@@ -55,15 +52,9 @@ object ReactExamples {
     console.log("TTTT " + state)
   }*/
 
-  val store = Var(AppState(List()));
+  val store = Var(AppState(List()))
 
-  // ===================================================================================================================
-  // Scala version of "A Simple Component" on http://facebook.github.io/react/
   def example1(mountNode: Node) = {
-    val HelloMessage = ReactComponentB[String]("HelloMessage")
-    .render(name => div("Hello ", name))
-    .build
-    //React.renderComponent(TodoApp(), mountNode)
     Obs(store){
       console.log("render")
       //dispatcher.state
@@ -108,6 +99,10 @@ object ReactExamples {
       t.modState(f set e.target.value)
     }
 
+    def onEnumChange[E](f : Lens[User,E], parse: String => E)(e: ReactEventI) = {
+      t.modState(f set parse(e.target.value))
+    }
+
     def handleSubmit(e: ReactEventI) = {
       e.preventDefault()
       console.log("KK" + t.state)
@@ -130,6 +125,7 @@ object ReactExamples {
         TodoList(P.users),
         form(onSubmit ==> B.handleSubmit)(
           inputs map (att => div(label(att._1),input(onChange ==> B.onFieldChange(att._2), value := att._2.get(S)))),
+          div(label("Role: "),input(onChange ==> B.onEnumChange(User._role, Role.parse), value := Role.write(S.role))),
           button("Add #", P.users.length + 1)
         )
       )

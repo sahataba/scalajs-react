@@ -15,8 +15,7 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
   )
 
   implicit val boolColumnType2 = MappedColumnType.base[example.Role, String](
-  { case Admin => "admin"},    // map Bool to Int
-  { case "admin" => Admin } // map Int to Bool
+  example.Role.write, example.Role.parse
   )
 
   // Auto Increment the id primary key column
