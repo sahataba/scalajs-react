@@ -80,7 +80,7 @@ object ReactExamples {
     ("name: ", User._name get),
     ("email: ", User._email get),
     ("birthday: ", (user:User) => User._birthday.get(user).toString),
-    ("role: ", (user:User) => User._role.get(user).toString))
+    ("role: ", Role.write _ compose (User._role get)))
 
   def tds(user:User) = todoItemFields.map{case (name,lns) => td(name + lns(user))}
 
