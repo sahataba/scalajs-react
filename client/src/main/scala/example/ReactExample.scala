@@ -73,8 +73,10 @@ object ReactExamples {
 
   val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
-    ReactCssTransitionGroup("example", component = "h3")(
-      table(border:="1px solid black;")(P.map{TodoItem(_)})
+    table(border:="1px solid black;")(
+      ReactCssTransitionGroup("example", component = "h3")(
+        P.map{TodoItem(_)}
+      )
     )
   })
   .build
