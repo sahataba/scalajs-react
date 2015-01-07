@@ -18,6 +18,8 @@ import rx._
 import monocle.syntax._
 import monocle._
 
+import Addons.ReactCssTransitionGroup
+
 
 @JSExport
 object ReactExamples {
@@ -71,7 +73,9 @@ object ReactExamples {
 
   val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
-    table(border:="1px solid black;")(P.map{TodoItem(_)})
+    ReactCssTransitionGroup("example", component = "h3")(
+      table(border:="1px solid black;")(P.map{TodoItem(_)})
+    )
   })
   .build
 
@@ -82,12 +86,12 @@ object ReactExamples {
     ("birthday: ", (user:User) => User._birthday.get(user).toString),
     ("role: ", Role.write _ compose (User._role get)))
 
-  def tds(user:User) = todoItemFields.map{case (name,lns) => td(name + lns(user))}
+  def tds(user:User) = todoItemFields.map{case (name,lns) => td(border:="1px solid black;")(name + lns(user))}
 
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
-    tr(
-      td(button(onClick ==> handleSubmit2(P))("X")),
+    tr(key := P.id.get.toString)(
+      td(border:="1px solid black;")(button(onClick ==> handleSubmit2(P))("X")),
       tds(P))
   })
   .build

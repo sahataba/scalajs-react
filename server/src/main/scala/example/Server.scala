@@ -8,7 +8,8 @@ import spray.http.{MediaTypes, HttpEntity}
 
 object Template{
   import scalatags.Text.all._
-  import scalatags.Text.tags2.title
+  import scalatags.Text.tags2.{title, style}
+
   val txt =
     "<!DOCTYPE html>" +
     html(
@@ -17,12 +18,20 @@ object Template{
         meta(httpEquiv:="Content-Type", content:="text/html; charset=UTF-8"),
         script(`type`:="text/javascript", src:="/client-fastopt.js"),
         script(`type`:="text/javascript", src:="//localhost:12345/workbench.js"),
-        script(`type` := "text/javascript", src:="http://fb.me/react-0.12.1.js"),
+        script(`type` := "text/javascript", src:="http://fb.me/react-with-addons-0.12.1.js"),
         link(
           rel:="stylesheet",
           `type`:="text/css",
           href:="META-INF/resources/webjars/bootstrap/3.2.0/css/bootstrap.min.css"
-        )
+        ),
+        style("""
+          .example-enter {
+          opacity: 0.01;
+          transition: opacity .5s ease-in;
+        }
+          .example-enter.example-enter-active {
+          opacity: 1;
+        }""")
       ),
       body(margin:=0)(
         div(id:="eg1"),
