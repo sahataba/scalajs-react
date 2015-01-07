@@ -117,10 +117,12 @@ object ReactExamples {
     }
   }
 
+  case class EditField(label:String, lens:Lens[User, String])
+
   def inputs = List(
-    ("First Name: ", User._firstName),
-    ("Last Name: ", User._lastName),
-    ("Email: ", User._email))
+    EditField(label = "First Name: ", lens = User._firstName),
+    EditField(label = "Last Name: ", lens = User._lastName),
+    EditField(label = "Email: ", lens = User._email))
 
   val TodoApp = ReactComponentB[AppState]("TodoApp")
     .initialState(User.dummy())
@@ -130,7 +132,7 @@ object ReactExamples {
         h3("TODO"),
         TodoList(P.users),
         form(onSubmit ==> B.handleSubmit)(
-          inputs map (att => div(label(att._1),input(onChange ==> B.onFieldChange(att._2), value := att._2.get(S)))),
+          inputs map (field => div(label(field.label),input(onChange ==> B.onFieldChange(field.lens), value := field.lens.get(S)))),
           div(
             label("Role: "),
             select(onChange ==> B.onEnumChange(User._role, Role.parse), value := Role.write(S.role))(
