@@ -26,12 +26,20 @@ object Template{
         ),
         style("""
           .example-enter {
-          opacity: 0.01;
-          transition: opacity .5s ease-in;
-        }
+            opacity: 0.01;
+            transition: opacity .5s ease-in;
+          }
           .example-enter.example-enter-active {
-          opacity: 1;
-        }""")
+            opacity: 1;
+          }
+          .example-leave {
+            opacity: 1;
+            transition: opacity .5s ease-in;
+          }
+          .example-leave.example-leave-active {
+            opacity: 0.01;
+          }
+              """)
       ),
       body(margin:=0)(
         div(id:="eg1"),
