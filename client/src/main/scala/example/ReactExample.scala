@@ -74,6 +74,12 @@ object ReactExamples {
   val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
     ReactCssTransitionGroup("example",  component = "table")(
+      thead(
+        tr(
+          th("Actions"),
+          todoItemFields.map{case (name,lns) => th(name)}
+        )
+      ),
       P.map{TodoItem(_)}
     )
   })
@@ -86,7 +92,7 @@ object ReactExamples {
     ("birthday: ", (user:User) => User._birthday.get(user).toString),
     ("role: ", Role.write _ compose (User._role get)))
 
-  def tds(user:User) = todoItemFields.map{case (name,lns) => td(name + lns(user))}
+  def tds(user:User) = todoItemFields.map{case (name,lns) => td(lns(user))}
 
   val TodoItem = ReactComponentB[User]("TodoItem")
   .render(P => {
