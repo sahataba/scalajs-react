@@ -88,7 +88,7 @@ object ReactExamples {
   val todoItemFields:List[(String, User => String)] = List(
     ("id: ", (user:User) => User._id.get(user).toString),
     ("name: ", User._name get),
-    ("email: ", User._email get),
+    ("email: ", (User._email composeLens Email._email) get),
     ("birthday: ", (user:User) => User._birthday.get(user).toString),
     ("role: ", Role.write _ compose (User._role get)))
 
@@ -105,12 +105,12 @@ object ReactExamples {
   //case class State(usr:User)
 
   class Backend(t: BackendScope[AppState, User]) {
-    def onFieldChange(f : Lens[User,String])(e: ReactEventI) = {
-      t.modState(f set e.target.value)
-    }
+    def onFieldChange[F](f : EditField[User, F])(e: ReactEventI) = {
 
-    def onEnumChange[E](f : Lens[User,E], parse: String => E)(e: ReactEventI) = {
-      t.modState(f set parse(e.target.value))
+      f.parse(e.target.value) match {
+        case Right(en) => t.modState(f.lens set en)
+        case Left(_) => console.log("Invalid: " + e.target.value)
+      }
     }
 
     def handleSubmit(e: ReactEventI) = {
@@ -121,12 +121,24 @@ object ReactExamples {
     }
   }
 
-  case class EditField(label:String, lens:Lens[User, String])
+  case class EditField[E, F](
+                           label:String,
+                           lens:Lens[E, F],
+                           parse: String => Either[String, F],
+                           write: F => String)
+
+  object EditField {
+    def value[E, F](entity:E, field:EditField[E, F]):String = field.write(field.lens.get(entity))
+  }
+
+  def ddParse = (v:String) => Right(v)
+  def id[E](x:E) = x
 
   def inputs = List(
-    EditField(label = "First Name: ", lens = User._firstName),
-    EditField(label = "Last Name: ", lens = User._lastName),
-    EditField(label = "Email: ", lens = User._email))
+    EditField[User,String](label = "First Name: ", lens = User._firstName, parse = ddParse, write = id),
+    EditField[User,String](label = "Last Name: ", lens = User._lastName, parse = ddParse, write = id),
+    EditField[User,Email](label = "Email: ", lens = User._email, Email.parse _, write = Email._email get),
+    EditField[User,Role](label = "Role: ", lens = User._role, Role.parse _, write = Role.write _))
 
   val TodoApp = ReactComponentB[AppState]("TodoApp")
     .initialState(User.dummy())
@@ -136,10 +148,10 @@ object ReactExamples {
         h3("TODO"),
         TodoList(P.users),
         form(onSubmit ==> B.handleSubmit)(
-          inputs map (field => div(label(field.label),input(onChange ==> B.onFieldChange(field.lens), value := field.lens.get(S)))),
+          inputs map (field => div(label(field.label),input(onChange ==> B.onFieldChange(field), value := EditField.value(S, field)))),
           div(
             label("Role: "),
-            select(onChange ==> B.onEnumChange(User._role, Role.parse), value := Role.write(S.role))(
+            select(onChange ==> B.onFieldChange(EditField(label = "Role", User._role, Role.parse _, write = Role.write _)), value := Role.write(S.role))(
               Role.values.map(role => option(value:=Role.write(role))(role.toString))
             )
           ),

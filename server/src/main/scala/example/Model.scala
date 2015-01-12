@@ -15,7 +15,11 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
   )
 
   implicit val boolColumnType2 = MappedColumnType.base[example.Role, String](
-  example.Role.write, example.Role.parse
+  example.Role.write, (str:String) => example.Role.parse(str).right.get
+  )
+
+  implicit val emailColumnType2 = MappedColumnType.base[example.Email, String](
+    (email:Email) => email.email, example.Email apply _
   )
 
   // Auto Increment the id primary key column
@@ -23,7 +27,7 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
   // The name can't be null
   def firstName = column[String]("FIRST_NAME", O.NotNull)
   def lastName = column[String]("LAST_NAME", O.NotNull)
-  def email = column[String]("EMAIL", O.NotNull)
+  def email = column[example.Email]("EMAIL", O.NotNull)
   def birthday = column[Date]("BIRTHDAY", O.NotNull)
   def role = column[example.Role]("ROLE", O.NotNull)
 
@@ -42,7 +46,7 @@ object TableModel {
 
   db.run(Action.seq(
     users.ddl.create,
-    users += User(firstName = "aurelius", lastName = "livingston", email = "great road", birthday = example.Date(1l), role = Admin)
+    users += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = example.Date(1l), role = Admin)
   ))
 
   def list2:Future[Seq[User]] = db.run(users.result)

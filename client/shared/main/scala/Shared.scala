@@ -13,9 +13,10 @@ case object Admin extends Role
 case object Member extends Role
 
 object Role {
-  def parse(value:String):Role = value match {
-    case "admin" => Admin
-    case "member" => Member
+  def parse(value:String):Either[String, Role] = value match {
+    case "admin" => Right(Admin)
+    case "member" => Right(Member)
+    case _ => Left("invalid role")
   }
   def write(role:Role):String = role match {
     case Admin => "admin"
@@ -62,18 +63,30 @@ sealed trait User2[UserLifecycle] {
 
 }
 
-//case class Name[UserLifecycle](value:String) extends AnyVal
+case class Email(email:String) extends AnyVal
+
+object Email {
+  val lenser = Lenser[Email]
+  val _email = lenser(_.email)
+
+  def parse(value:String):Either[String, Email] = {
+    """\b[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\b""".r.findFirstIn(value) match {
+      case Some(_) => Right(Email(value))
+      case None => Left("invalid email")
+    }
+  }
+}
 
 case class User(
                  firstName: String,
                  lastName:String,
                  id: Option[Int] = None,
-                 email:String,
+                 email:Email,
                  birthday:Date,
                  role:Role)
 
 object User {
-  def dummy():User =  User(id = None, firstName = "", lastName = "", email = "", birthday = Date(1l), role = Admin)
+  def dummy():User =  User(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin)
   val lenser = Lenser[User]
   val _firstName = lenser(_.firstName)
   val _lastName = lenser(_.lastName)

@@ -85,7 +85,7 @@ object Server extends SimpleRoutingApp with Api{
   }
 
   def createUser(user:User):Future[User] = {
-    TableModel.createUser(user).map(id => user.copy(id = Some(id)))
+    TableModel.createUser(user).map(User._id set Some(_) apply user)
   }
 
   def removeUser(id:Int):Future[Unit] = {
