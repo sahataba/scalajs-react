@@ -14,7 +14,9 @@ val cross = new utest.jsrunner.JsCrossBuild(
     "com.lihaoyi" %%% "upickle" % "0.2.5",
     "com.lihaoyi" %%% "autowire" % "0.2.3",
     "com.scalatags" %%% "scalatags" % "0.4.2",
-    "com.scalarx" %%% "scalarx" % "0.2.6"
+    "com.scalarx" %%% "scalarx" % "0.2.6",
+    "com.github.japgolly.nyaya" %%% "nyaya-core" % "0.5.0",
+    "com.github.japgolly.nyaya" %%% "nyaya-test" % "0.5.0" % "test"
   )
 )
 val client = cross.js.in(file("client"))

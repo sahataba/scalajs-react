@@ -24,6 +24,46 @@ object Role {
   val values = List(Admin, Member)
 }
 
+
+sealed trait IDLifecycle
+case object Draft extends IDLifecycle
+case object Saved extends IDLifecycle
+
+trait EntityLifecycle {
+  type E
+  type ID
+  //type LifeCycle <: IDLifecycle
+  val entity:E
+  val id:Option[ID]
+  val lifecycle:IDLifecycle
+}
+
+case class DraftEntity[EN](
+                            id:None.type,
+                            entity:EN,
+                            lifecycle:Draft.type) extends EntityLifecycle {
+  type E = EN;
+  type ID = None.type;
+  type lifecycle = Draft.type
+}
+case class SavedEntity[EN](
+                            id:Some[Int],
+                            entity:EN,
+                            lifecycle:Saved.type) extends EntityLifecycle {
+  type E = EN;
+  type ID = Int;
+  type lifecycle = IDLifecycle
+}
+case class PublishedEntity[E](saved:SavedEntity[E], publishedDate:Int)
+
+sealed trait User2[UserLifecycle] {
+
+  def addId2[E](draft:DraftEntity[E]):SavedEntity[E] = SavedEntity(Some(5), draft.entity, Saved)
+
+}
+
+//case class Name[UserLifecycle](value:String) extends AnyVal
+
 case class User(
                  firstName: String,
                  lastName:String,
