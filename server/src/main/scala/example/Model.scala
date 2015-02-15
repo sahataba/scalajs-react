@@ -44,7 +44,7 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 }
 
 // The main application
-object TableModel {
+object TableModel extends CRUD[User]{
 
   // The query interface for the Suppliers table
   val users: TableQuery[Users] = TableQuery[Users]
@@ -58,8 +58,8 @@ object TableModel {
 
   def list2:Future[Seq[User]] = db.run(users.result)
   def create(user:User):Future[Int] = db.run((users returning users.map(_.id)) += user)
-  def remove(id:Option[Int]) = db.run(users.filter(_.id === id).delete)
-  def update(id:Option[Int], upd:User => User) = {
+  def remove(id:Id) = db.run(users.filter(_.id === id).delete)
+  def update(id:Id, upd:User => User) = {
     val act = for {
       user <- users.filter(_.id === id).result.head
       updated = upd(user)
@@ -67,4 +67,11 @@ object TableModel {
     } yield updated
     db.run(act)
   }
+}
+
+trait CRUD[E] {
+  type Id = Option[Int]
+  def create(entity:E):Future[Int]
+  def remove(id:Id):Future[Int]
+  def update(id:Id, upd: E => E):Future[E]
 }
