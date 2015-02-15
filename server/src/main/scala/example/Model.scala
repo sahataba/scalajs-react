@@ -61,21 +61,19 @@ object TableModel extends CRUD[User, Users]{
   ))
 
   def list2:Future[Seq[User]] = db.run(table.result)
-  def remove(id:Id):Future[Int] = db.run(table.filter(_.id === id).delete)
 
 }
 
 trait CRUD[E,T <: TableWithId[E]] {
   val profile:JdbcProfile
   val db:Database
-  import profile.api._
   val table: TableQuery[T]
 
   type Id = Option[Int]
 
   def create(entity:E):Future[Int] = db.run((table returning table.map(_.id)) += entity)
 
-  def remove(id:Id):Future[Int]
+  def remove(id:Id):Future[Int] = db.run(table.filter(_.id === id).delete)
 
   def update(id:Id, upd: E => E):Future[E] =  {
     val act = for {
