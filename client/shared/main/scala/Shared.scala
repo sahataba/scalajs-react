@@ -12,6 +12,10 @@ sealed trait Role
 case object Admin extends Role
 case object Member extends Role
 
+sealed trait Status
+case object Pending extends Status
+case object Finished extends Status
+
 object Role {
   def parse(value:String):Either[String, Role] = value match {
     case "admin" => Right(Admin)
@@ -23,6 +27,19 @@ object Role {
     case Member => "member"
   }
   val values = List(Admin, Member)
+}
+
+object Status {
+  def parse(value:String):Either[String, Status] = value match {
+    case "pending" => Right(Pending)
+    case "finished" => Right(Finished)
+    case _ => Left("invalid role")
+  }
+  def write(status:Status):String = status match {
+    case Pending => "pending"
+    case Finished => "finished"
+  }
+  val values = List(Pending, Finished)
 }
 
 
@@ -83,10 +100,11 @@ case class User(
                  id: Option[Int] = None,
                  email:Email,
                  birthday:Date,
-                 role:Role)
+                 role:Role,
+                 status:Status)
 
 object User {
-  def dummy():User =  User(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin)
+  def dummy():User =  User(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = Pending)
   val lenser = Lenser[User]
   val _firstName = lenser(_.firstName)
   val _lastName = lenser(_.lastName)
@@ -95,6 +113,7 @@ object User {
   val _birthday = lenser(_.birthday)
   val _role = lenser(_.role)
   val _id = lenser(_.id)
+  val _status = lenser(_.status)
 }
 
 trait Api{

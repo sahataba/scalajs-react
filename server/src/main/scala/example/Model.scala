@@ -5,6 +5,7 @@ import scala.slick.driver.H2Driver.api._
 import scala.slick.lifted.{ProvenShape, ForeignKeyQuery}
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class Users(tag: Tag) extends Table[User](tag, "USERS") {
 
@@ -16,6 +17,10 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 
   implicit val boolColumnType2 = MappedColumnType.base[example.Role, String](
   example.Role.write, (str:String) => example.Role.parse(str).right.get
+  )
+
+  implicit val statusColumnType2 = MappedColumnType.base[example.Status, String](
+    example.Status.write, (str:String) => example.Status.parse(str).right.get
   )
 
   implicit val emailColumnType2 = MappedColumnType.base[example.Email, String](
@@ -30,10 +35,12 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
   def email = column[example.Email]("EMAIL", O.NotNull)
   def birthday = column[Date]("BIRTHDAY", O.NotNull)
   def role = column[example.Role]("ROLE", O.NotNull)
+  def status = column[example.Status]("STATUS", O.NotNull)
+
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
-  def * = (firstName, lastName, id.?, email, birthday, role) <> ((User.apply _).tupled, User.unapply)
+  def * = (firstName, lastName, id.?, email, birthday, role, status) <> ((User.apply _).tupled, User.unapply)
 }
 
 // The main application
@@ -46,10 +53,18 @@ object TableModel {
 
   db.run(Action.seq(
     users.ddl.create,
-    users += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = example.Date(1l), role = Admin)
+    users += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = example.Date(1l), role = Admin, status = Pending)
   ))
 
   def list2:Future[Seq[User]] = db.run(users.result)
-  def createUser(user:User):Future[Int] = db.run((users returning users.map(_.id)) += user)
-  def removeUser(id:Option[Int]) = db.run(users.filter(_.id === id).delete)
+  def create(user:User):Future[Int] = db.run((users returning users.map(_.id)) += user)
+  def remove(id:Option[Int]) = db.run(users.filter(_.id === id).delete)
+  def update(id:Option[Int], upd:User => User) = {
+    val act = for {
+      user <- users.filter(_.id === id).result.head
+      updated = upd(user)
+      _ <- users.filter(_.id ===id).update(updated)
+    } yield updated
+    db.run(act)
+  }
 }
