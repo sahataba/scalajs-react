@@ -64,22 +64,22 @@ object TableModel extends CRUD[User, Users]{
 
 }
 
+case class Id[E](value:Int) extends AnyVal
+
 trait CRUD[E,T <: TableWithId[E]] {
   val profile:JdbcProfile
   val db:Database
   val table: TableQuery[T]
 
-  type Id = Option[Int]
-
   def create(entity:E):Future[Int] = db.run((table returning table.map(_.id)) += entity)
 
-  def remove(id:Id):Future[Int] = db.run(table.filter(_.id === id).delete)
+  def remove(id:Id[E]):Future[Int] = db.run(table.filter(_.id === id.value).delete)
 
-  def update(id:Id, upd: E => E):Future[E] =  {
+  def update(id:Id[E], upd: E => E):Future[E] =  {
     val act = for {
-      ent <- table.filter(_.id === id).result.head
+      ent <- table.filter(_.id === id.value).result.head
       updated = upd(ent)
-      _ <- table.filter(_.id ===id).update(updated)
+      _ <- table.filter(_.id === id.value).update(updated)
     } yield updated
     db.run(act)
   }

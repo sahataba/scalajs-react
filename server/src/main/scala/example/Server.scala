@@ -89,14 +89,14 @@ object Server extends SimpleRoutingApp with Api{
   }
 
   def removeUser(id:Int):Future[Unit] = {
-   TableModel.remove(Some(id)).map(a => ())
+   TableModel.remove(Id(id)).map(a => ())
   }
 
   def updateLastname(id:Int, lastname:String):Future[User] = {
-    TableModel.update(Some(id), User._lastName.set(lastname))
+    TableModel.update(Id(id), User._lastName.set(lastname))
   }
 
   def publish(id:Int):Future[User] = {
-    TableModel.update(Some(id), User._status.set(Finished))
+    TableModel.update(Id(id), User._status.set(Finished))
   }
 }
