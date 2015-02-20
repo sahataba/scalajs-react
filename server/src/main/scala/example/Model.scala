@@ -55,12 +55,18 @@ object TableModel extends CRUD[User, Users]{
 
   lazy val db = Database.forURL("jdbc:h2:mem:hello;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
 
-  db.run(Action.seq(
+  val createActions = Action.seq(
     table.ddl.create,
     table += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = example.Date(1l), role = Admin, status = Pending)
-  ))
+  )
+
+  db.run(createActions)
 
   def list2:Future[Seq[User]] = db.run(table.result)
+
+  def byIdAct(id:Rep[Int]) = table.filter(_.id === id)
+  val byIdActCompiled = Compiled(byIdAct _)
+  def byId(id:Int) = db.run(byIdActCompiled(id).result)
 
 }
 
