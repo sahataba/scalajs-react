@@ -64,8 +64,7 @@ object TableModel extends CRUD[User, Users]{
 
   def list2:Future[Seq[User]] = db.run(table.result)
 
-  def byIdAct(id:Rep[Int]) = table.filter(_.id === id)
-  val byIdActCompiled = Compiled(byIdAct _)
+  val byIdActCompiled = Compiled((id:Rep[Int]) => table.filter(_.id === id))
   def byId(id:Int) = db.run(byIdActCompiled(id).result)
 
 }
