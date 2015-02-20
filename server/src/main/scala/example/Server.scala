@@ -1,10 +1,22 @@
 package example
+
 import upickle._
-import spray.routing.SimpleRoutingApp
+
 import akka.actor.ActorSystem
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent._
-import spray.http.{MediaTypes, HttpEntity}
+import akka.event.{LoggingAdapter, Logging}
+import akka.http.Http
+import akka.http.client.RequestBuilding
+import akka.http.marshallers.sprayjson.SprayJsonSupport._
+import akka.http.marshalling.ToResponseMarshallable
+import akka.http.model.{MediaTypes, HttpResponse, HttpRequest, HttpEntity}
+import akka.http.model.StatusCodes._
+import akka.http.server.Directives._
+import akka.http.unmarshalling.Unmarshal
+import akka.stream.FlowMaterializer
+import akka.stream.scaladsl.{Sink, Source}
+import com.typesafe.config.Config
+import com.typesafe.config.ConfigFactory
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 object Template{
   import scalatags.Text.all._
@@ -51,34 +63,48 @@ object AutowireServer extends autowire.Server[String, upickle.Reader, upickle.Wr
   def read[Result: upickle.Reader](p: String) = upickle.read[Result](p)
   def write[Result: upickle.Writer](r: Result) = upickle.write(r)
 }
-object Server extends SimpleRoutingApp with Api{
-  def main(args: Array[String]): Unit = {
-    implicit val system = ActorSystem()
-    startServer("0.0.0.0", port = 8080) {
-      get{
-        pathSingleSlash {
-          complete{
-            HttpEntity(
-              MediaTypes.`text/html`,
-              Template.txt
-            )
-          }
-        } ~
-        getFromResourceDirectory("")
-      } ~
-      post {
-        path("api" / Segments){ s =>
-          extract(_.request.entity.asString) { e =>
-            complete {
-              AutowireServer.route[Api](Server)(
-                autowire.Core.Request(s, upickle.read[Map[String, String]](e))
-              )
-            }
-          }
+
+object AkkaHttpMicroservice extends App with Service {
+  override implicit val system = ActorSystem()
+  override implicit val executor = system.dispatcher
+  override implicit val materializer = FlowMaterializer()
+
+  override val config = ConfigFactory.load()
+  override val logger = Logging(system, getClass)
+
+  Http().bind(interface = config.getString("http.interface"), port = config.getInt("http.port")).startHandlingWith(routes)
+}
+
+trait Service extends Api{
+
+  implicit val system: ActorSystem
+  implicit def executor: ExecutionContextExecutor
+  implicit val materializer: FlowMaterializer
+
+  def config: Config
+  val logger: LoggingAdapter
+
+  val routes = get{
+    pathSingleSlash {
+      complete{
+        HttpEntity(
+          MediaTypes.`text/html`,
+          Template.txt
+        )
+      }
+    } ~
+      getFromResourceDirectory("")
+  } ~
+    (post & entity(as[String])) { entity =>
+      path("api" / Segments){ s =>
+        complete {
+          ToResponseMarshallable(
+          AutowireServer.route[Api](AkkaHttpMicroservice)(
+            autowire.Core.Request(s, upickle.read[Map[String, String]](entity))
+          ))
         }
       }
     }
-  }
 
   def users: Future[Seq[User]] = {
     TableModel.list2

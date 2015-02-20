@@ -34,15 +34,27 @@ val client = cross.js.in(file("client"))
   bootSnippet := "ReactExample().main();"
 )
 
+val akkahttpdependencies = {
+  val akkaV       = "2.3.9"
+  val akkaStreamV = "1.0-M2"
+  val scalaTestV  = "2.2.1"
+  Seq(
+    "com.typesafe.akka" %% "akka-actor"                        % akkaV,
+    "com.typesafe.akka" %% "akka-stream-experimental"          % akkaStreamV,
+    "com.typesafe.akka" %% "akka-http-core-experimental"       % akkaStreamV,
+    "com.typesafe.akka" %% "akka-http-experimental"            % akkaStreamV,
+    "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaStreamV,
+    "com.typesafe.akka" %% "akka-http-testkit-experimental"    % akkaStreamV,
+    "org.scalatest"     %% "scalatest"                         % scalaTestV % "test"
+  )
+}
+
 val server = cross.jvm.in(file("server"))
                     .copy(id="server")
                     .settings(Revolver.settings:_*)
                     .settings(
   name := "Server",
-  libraryDependencies ++= Seq(
-    "io.spray" %% "spray-can" % "1.3.1",
-    "io.spray" %% "spray-routing" % "1.3.1",
-    "com.typesafe.akka" %% "akka-actor" % "2.3.2",
+  libraryDependencies ++= akkahttpdependencies ++ Seq(
     "org.webjars" % "bootstrap" % "3.2.0",
     "com.typesafe.slick" %% "slick" % "3.0.0-M1",
     "org.slf4j" % "slf4j-nop" % "1.6.4",
