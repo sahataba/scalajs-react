@@ -1,10 +1,10 @@
 package example
 
-import scala.slick.driver.H2Driver.api._
+import slick.driver.H2Driver.api._
 
-import scala.slick.lifted.{ProvenShape, ForeignKeyQuery}
+import slick.lifted.{ProvenShape, ForeignKeyQuery}
 import scala.concurrent._
-import scala.slick.driver.JdbcProfile
+import slick.driver.JdbcProfile
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -48,14 +48,14 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
 // The main application
 object TableModel extends CRUD[User, Users]{
 
-  val profile = scala.slick.driver.H2Driver
+  val profile = slick.driver.H2Driver
 
   // The query interface for the Suppliers table
   val table: TableQuery[Users] = TableQuery[Users]
 
   lazy val db = Database.forURL("jdbc:h2:mem:hello;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
 
-  val createActions = Action.seq(
+  val createActions = DBIO.seq(
     table.ddl.create,
     table += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = example.Date(1l), role = Admin, status = Pending)
   )
@@ -78,7 +78,8 @@ trait CRUD[E,T <: TableWithId[E]] {
 
   def create(entity:E):Future[Int] = db.run((table returning table.map(_.id)) += entity)
 
-  def remove(id:Id[E]):Future[Int] = db.run(table.filter(_.id === id.value).delete)
+  val rem2 = (id:Rep[Int]) => table.filter(_.id === id).delete
+  def remove(id:Id[E]):Future[Int] = db.run(rem2(id.value))
 
   def update(id:Id[E], upd: E => E):Future[E] =  {
     val act = for {
