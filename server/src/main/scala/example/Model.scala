@@ -32,12 +32,12 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
     (email:Email) => email.email, example.Email apply _
   )
 
-  def firstName = column[String]("FIRST_NAME", O.NotNull)
-  def lastName = column[String]("LAST_NAME", O.NotNull)
-  def email = column[example.Email]("EMAIL", O.NotNull)
-  def birthday = column[Date]("BIRTHDAY", O.NotNull)
-  def role = column[example.Role]("ROLE", O.NotNull)
-  def status = column[example.Status]("STATUS", O.NotNull)
+  def firstName = column[String]("FIRST_NAME")
+  def lastName = column[String]("LAST_NAME")
+  def email = column[example.Email]("EMAIL")
+  def birthday = column[Date]("BIRTHDAY")
+  def role = column[example.Role]("ROLE")
+  def status = column[example.Status]("STATUS")
 
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
