@@ -31,17 +31,9 @@ sealed trait Status
 case object Pending extends Status
 case object Finished extends Status
 
-object Status {
-  def parse(value:String):Either[String, Status] = value match {
-    case "pending" => Right(Pending)
-    case "finished" => Right(Finished)
-    case _ => Left("invalid role")
-  }
-  def write(status:Status):String = status match {
-    case Pending => "pending"
-    case Finished => "finished"
-  }
-  val values = List(Pending, Finished)
+object StatusConverter extends Converter[Status]{
+  val values = Map("pending" -> Pending, "finished" -> Finished)
+  val statuses = List(Pending, Finished)
 }
 
 

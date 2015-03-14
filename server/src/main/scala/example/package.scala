@@ -30,7 +30,7 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
   )
 
   implicit val statusColumnType2 = MappedColumnType.base[example.Status, String](
-    example.Status.write, (str:String) => example.Status.parse(str).right.get
+    StatusConverter.write, (str:String) => StatusConverter.read(str).right.get
   )
 
   implicit val emailColumnType2 = MappedColumnType.base[example.Email, String](
