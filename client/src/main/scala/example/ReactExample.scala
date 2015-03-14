@@ -29,7 +29,7 @@ object ReactExamples {
     example1(document getElementById "eg1")
   }
 
-  case class AppState(var users:List[User]) {
+  case class AppState(user:UserSession, var users:List[User]) {
     def createUser(user:User):Future[Unit] = {
       Client[example.Api].
         createUser(user).
@@ -38,13 +38,15 @@ object ReactExamples {
     }
     def removeUser(user:User) = {
       Client[example.Api].
-        removeUser(user.id.get).
+        deleteUser(user.id.get).
         call().
         map(_ => store() = store().copy(users = users.filter( _ != user)))
     }
   }
 
-  Client[example.Api].users().call().map(_.toList).map{t =>
+  val store = Var(AppState(UserSession("rudi"), List()))
+
+  Client[example.Api].users(store().user).call().map(_.toList).map{t =>
     store() = store().copy(users = t)
   }
 
@@ -54,7 +56,6 @@ object ReactExamples {
     console.log("TTTT " + state)
   }*/
 
-  val store = Var(AppState(List()))
 
   def example1(mountNode: Node) = {
     Obs(store){

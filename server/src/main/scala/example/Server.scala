@@ -106,23 +106,23 @@ trait Service extends Api{
       }
     }
 
-  def users: Future[Seq[User]] = {
+  def users(user:UserSession): Future[Seq[User]] = {
     TableModel.list2
   }
 
   def createUser(user:User):Future[User] = {
-    TableModel.create(user).map(User._id set Some(_) apply user)
+    TableModel.create(user).map(id => User._id set Some(id) apply user)
   }
 
-  def removeUser(id:Int):Future[Unit] = {
-   TableModel.remove(Id(id)).map(a => ())
+  def deleteUser(id:Id[User]):Future[Deleted[User]] = {
+   TableModel.delete(id)
   }
 
   def updateLastname(id:Int, lastname:String):Future[User] = {
-    TableModel.update(Id(id), User._lastName.set(lastname))
+    TableModel.fetchThenUpdate(Id(id), User._lastName.set(lastname))
   }
 
   def publish(id:Int):Future[User] = {
-    TableModel.update(Id(id), User._status.set(Finished))
+    TableModel.fetchThenUpdate(Id(id), User._status.set(Finished))
   }
 }

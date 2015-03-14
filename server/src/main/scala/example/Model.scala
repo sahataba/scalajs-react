@@ -14,6 +14,11 @@ abstract class TableWithId[A](tag:Tag, name:String) extends Table[A](tag:Tag, na
 
 class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
 
+  implicit val idColumnType = MappedColumnType.base[Id[User], Int](
+   b => b.value,
+   id => Id(id)
+  )
+
   // And a ColumnType that maps it to Int values 1 and 0
   implicit val boolColumnType = MappedColumnType.base[Date, Long](
   { b => b.utc},    // map Bool to Int
@@ -42,7 +47,31 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
-  def * = (firstName, lastName, id.?, email, birthday, role, status) <> ((User.apply _).tupled, User.unapply)
+
+  def toUser(firstName:String, lastName:String, id:Option[Int], email:Email, birthday:Date, role:Role, status:Status) = {
+    User(
+      id = Some(Id(id.get)),
+      firstName = firstName,
+      lastName = lastName,
+      email = email,
+      birthday = birthday,
+      role = role,
+      status = status
+    )
+  }
+
+  val toRecord: User => Option[(String, String, Option[Int], Email, Date, Role, Status)] = user =>
+    Some((
+      user.firstName,
+      user.lastName,
+      user.id.map(_.value),
+      user.email,
+      user.birthday,
+      user.role,
+      user.status
+    ))
+
+  def * = (firstName, lastName, id.?, email, birthday, role, status) <> ((toUser _).tupled, toRecord)
 }
 
 // The main application
@@ -69,23 +98,26 @@ object TableModel extends CRUD[User, Users]{
 
 }
 
-case class Id[E](value:Int) extends AnyVal
-
 trait CRUD[E,T <: TableWithId[E]] {
   val profile:JdbcProfile
   val db:Database
   val table: TableQuery[T]
 
-  def create(entity:E):Future[Int] = db.run((table returning table.map(_.id)) += entity)
+  def create(entity:E):Future[Id[E]] = (db.run((table returning table.map(_.id)) += entity)).map(a => Id[E](a))
 
-  val rem2 = (id:Rep[Int]) => table.filter(_.id === id).delete
-  def remove(id:Id[E]):Future[Int] = db.run(rem2(id.value))
+  //val del2 = (id:Rep[Int]) => table.filter(_.id === Id(id)).delete
 
-  def update(id:Id[E], upd: E => E):Future[E] =  {
+  def delete(id:Id[E]):Future[Deleted[E]] = {
+    db.run(table.filter(_.id === id.value).delete.map(_ => Deleted(id)))
+  }
+
+  val findById = table.findBy(_.id)
+
+  def fetchThenUpdate(id:Id[E], upd: E => E):Future[E] =  {
     val act = for {
-      ent <- table.filter(_.id === id.value).result.head
+      ent <- findById(id.value).result.head
       updated = upd(ent)
-      _ <- table.filter(_.id === id.value).update(updated)
+      _ <- {println(s"TTT: $updated");findById(id.value).update(updated)}
     } yield updated
     db.run(act)
   }

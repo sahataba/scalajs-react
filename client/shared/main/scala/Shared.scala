@@ -47,6 +47,9 @@ sealed trait IDLifecycle
 case object Draft extends IDLifecycle
 case object Saved extends IDLifecycle
 
+case class Id[E](value:Int) extends AnyVal
+case class Deleted[E](id:Id[E])
+
 trait EntityLifecycle {
   type E
   type ID
@@ -94,10 +97,12 @@ object Email {
   }
 }
 
+case class UserSession(id:String)
+
 case class User(
                  firstName: String,
                  lastName:String,
-                 id: Option[Int] = None,
+                 id: Option[Id[User]] = None,
                  email:Email,
                  birthday:Date,
                  role:Role,
@@ -117,7 +122,7 @@ object User {
 }
 
 trait Api{
-  def users(): Future[Seq[User]]
+  def users(user:UserSession): Future[Seq[User]]
   def createUser(user:User):Future[User]
-  def removeUser(id:Int):Future[Unit]
+  def deleteUser(id:Id[User]):Future[Deleted[User]]
 }
