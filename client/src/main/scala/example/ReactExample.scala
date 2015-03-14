@@ -91,7 +91,7 @@ object ReactExamples {
     ("name: ", User._name get),
     ("email: ", (User._email composeLens Email._email) get),
     ("birthday: ", (user:User) => User._birthday.get(user).toString),
-    ("role: ", Role.write _ compose (User._role get)))
+    ("role: ", RoleConverter.write compose (User._role get)))
 
   def tds(user:User) = todoItemFields.map{case (name,lns) => td(lns(user))}
 
@@ -139,7 +139,7 @@ object ReactExamples {
     EditField[User,String](label = "First Name: ", lens = User._firstName, parse = ddParse, write = id),
     EditField[User,String](label = "Last Name: ", lens = User._lastName, parse = ddParse, write = id),
     EditField[User,Email](label = "Email: ", lens = User._email, Email.parse _, write = Email._email get),
-    EditField[User,Role](label = "Role: ", lens = User._role, Role.parse _, write = Role.write _))
+    EditField[User,Role](label = "Role: ", lens = User._role, parse = RoleConverter.read, write = RoleConverter.write))
 
   val TodoApp = ReactComponentB[AppState]("TodoApp")
     .initialState(User.dummy())
@@ -152,8 +152,8 @@ object ReactExamples {
           inputs map (field => div(label(field.label),input(onChange ==> B.onFieldChange(field), value := EditField.value(S, field)))),
           div(
             label("Role: "),
-            select(onChange ==> B.onFieldChange(EditField(label = "Role", User._role, Role.parse _, write = Role.write _)), value := Role.write(S.role))(
-              Role.values.map(role => option(value:=Role.write(role))(role.toString))
+            select(onChange ==> B.onFieldChange(EditField(label = "Role", User._role, parse = RoleConverter.read, write = RoleConverter.write)), value := RoleConverter.write(S.role))(
+              RoleConverter.roles.map(role => option(value:=RoleConverter.write(role))(role.toString))
             )
           ),
           button("Add #", P.users.length + 1)

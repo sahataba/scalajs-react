@@ -8,26 +8,28 @@ import monocle._
 
 case class Date(utc:Long) extends AnyVal
 
+trait Converter[E] {
+  val values:Map[String, E]
+  def read: String => Either[String, E] = value => values.get(value) match {
+    case Some(entity) => Right(entity)
+    case None => Left("missing key")
+  }
+  def write: E => String = values map (_.swap)
+
+}
+
 sealed trait Role
 case object Admin extends Role
 case object Member extends Role
 
+object RoleConverter extends Converter[Role] {
+  val values = Map("admin" -> Admin, "member" -> Member)
+  val roles:List[Role] = List(Admin, Member)
+}
+
 sealed trait Status
 case object Pending extends Status
 case object Finished extends Status
-
-object Role {
-  def parse(value:String):Either[String, Role] = value match {
-    case "admin" => Right(Admin)
-    case "member" => Right(Member)
-    case _ => Left("invalid role")
-  }
-  def write(role:Role):String = role match {
-    case Admin => "admin"
-    case Member => "member"
-  }
-  val values = List(Admin, Member)
-}
 
 object Status {
   def parse(value:String):Either[String, Status] = value match {

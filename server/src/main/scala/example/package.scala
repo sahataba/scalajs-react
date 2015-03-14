@@ -26,7 +26,7 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
   )
 
   implicit val boolColumnType2 = MappedColumnType.base[example.Role, String](
-  example.Role.write, (str:String) => example.Role.parse(str).right.get
+    RoleConverter.write, (str:String) => RoleConverter.read(str).right.get
   )
 
   implicit val statusColumnType2 = MappedColumnType.base[example.Status, String](
