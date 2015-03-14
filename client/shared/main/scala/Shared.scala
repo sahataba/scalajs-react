@@ -121,8 +121,17 @@ object User {
   val _status = lenser(_.status)
 }
 
-trait Api{
+trait Create[E] {
+  def create(entity:E):Future[E]
+}
+
+trait Delete[E] {
+  def delete(id:Id[E]):Future[Deleted[E]]
+}
+
+trait Api extends Create[User] with Delete[User]{
+
   def users(user:UserSession): Future[Seq[User]]
-  def createUser(user:User):Future[User]
-  def deleteUser(id:Id[User]):Future[Deleted[User]]
+  def create(entity:User):Future[User]
+  def delete(id:Id[User]):Future[Deleted[User]]
 }

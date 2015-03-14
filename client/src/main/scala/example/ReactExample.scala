@@ -32,13 +32,13 @@ object ReactExamples {
   case class AppState(user:UserSession, var users:List[User]) {
     def createUser(user:User):Future[Unit] = {
       Client[example.Api].
-        createUser(user).
+        create(user).
         call().
         map(u => store() = store().copy(users = store().users ++ List(u)))
     }
     def removeUser(user:User) = {
       Client[example.Api].
-        deleteUser(user.id.get).
+        delete(user.id.get).
         call().
         map(_ => store() = store().copy(users = users.filter( _ != user)))
     }
