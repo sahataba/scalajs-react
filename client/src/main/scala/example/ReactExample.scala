@@ -91,6 +91,7 @@ object ReactExamples {
     ("name: ", User._name get),
     ("email: ", (User._email composeLens Email._email) get),
     ("birthday: ", (user:User) => User._birthday.get(user).toString),
+    ("status: ", (user:User) => User._status.get(user).toString),
     ("role: ", RoleConverter.write compose (User._role get)))
 
   def tds(user:User) = todoItemFields.map{case (name,lns) => td(lns(user))}

@@ -18,23 +18,27 @@ trait Converter[E] {
 
 }
 
-sealed trait Role
-case object Admin extends Role
-case object Member extends Role
+object StatusConverter extends Converter[Status[User]]{
+  val values = Map("Applied" -> Applied, "Approved" -> Approved)
+  val statuses = List(Applied, Approved)
+}
 
 object RoleConverter extends Converter[Role] {
   val values = Map("admin" -> Admin, "member" -> Member)
   val roles:List[Role] = List(Admin, Member)
 }
 
-sealed trait Status
-case object Pending extends Status
-case object Finished extends Status
+sealed trait Role
+case object Admin extends Role
+case object Member extends Role
 
-object StatusConverter extends Converter[Status]{
-  val values = Map("pending" -> Pending, "finished" -> Finished)
-  val statuses = List(Pending, Finished)
-}
+
+
+sealed trait Status[E]
+case object Applied extends Status[User]
+case object Approved extends Status[User]
+
+
 
 
 sealed trait IDLifecycle
@@ -43,6 +47,8 @@ case object Saved extends IDLifecycle
 
 case class Id[E](value:Int) extends AnyVal
 case class Deleted[E](id:Id[E])
+case class Created[E](id:Id[E])
+
 
 trait EntityLifecycle {
   type E
@@ -100,10 +106,10 @@ case class User(
                  email:Email,
                  birthday:Date,
                  role:Role,
-                 status:Status)
+                 status:Status[User])
 
 object User {
-  def dummy():User =  User(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = Pending)
+  def dummy():User =  User(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = Applied)
   val lenser = Lenser[User]
   val _firstName = lenser(_.firstName)
   val _lastName = lenser(_.lastName)

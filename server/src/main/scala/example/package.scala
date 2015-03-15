@@ -29,7 +29,7 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
     RoleConverter.write, (str:String) => RoleConverter.read(str).right.get
   )
 
-  implicit val statusColumnType2 = MappedColumnType.base[example.Status, String](
+  implicit val statusColumnType2 = MappedColumnType.base[example.Status[User], String](
     StatusConverter.write, (str:String) => StatusConverter.read(str).right.get
   )
 
@@ -42,13 +42,13 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
   def email = column[example.Email]("EMAIL")
   def birthday = column[Date]("BIRTHDAY")
   def role = column[example.Role]("ROLE")
-  def status = column[example.Status]("STATUS")
+  def status = column[example.Status[User]]("STATUS")
 
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
 
-  def toUser(firstName:String, lastName:String, id:Option[Int], email:Email, birthday:Date, role:Role, status:Status) = {
+  def toUser(firstName:String, lastName:String, id:Option[Int], email:Email, birthday:Date, role:Role, status:Status[User]) = {
     User(
       id = Some(Id(id.get)),
       firstName = firstName,
@@ -60,7 +60,7 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
     )
   }
 
-  val toRecord: User => Option[(String, String, Option[Int], Email, Date, Role, Status)] = user =>
+  val toRecord: User => Option[(String, String, Option[Int], Email, Date, Role, Status[User])] = user =>
     Some((
       user.firstName,
       user.lastName,
@@ -86,7 +86,7 @@ object TableModel extends CRUD[User, Users]{
 
   val createActions = DBIO.seq(
     table.ddl.create,
-    table += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = example.Date(1l), role = Admin, status = Pending)
+    table += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = example.Date(1l), role = Admin, status = Approved)
   )
 
   db.run(createActions)
@@ -98,12 +98,11 @@ object TableModel extends CRUD[User, Users]{
 
 }
 
-trait CRUD[E,T <: TableWithId[E]] {
+trait CRUD[E,T <: TableWithId[E]] extends CreateDBAction[E, T]{
   val profile:JdbcProfile
   val db:Database
   val table: TableQuery[T]
 
-  def create(entity:E):Future[Id[E]] = (db.run((table returning table.map(_.id)) += entity)).map(a => Id[E](a))
 
   //val del2 = (id:Rep[Int]) => table.filter(_.id === Id(id)).delete
 
@@ -121,4 +120,14 @@ trait CRUD[E,T <: TableWithId[E]] {
     } yield updated
     db.run(act)
   }
+}
+
+
+trait CreateDBAction[E,T <: TableWithId[E]] {
+
+  val profile:JdbcProfile
+  val db:Database
+  val table: TableQuery[T]
+
+  def create(entity:E):Future[Created[E]] = (db.run((table returning table.map(_.id)) += entity)).map(a => Created(Id[E](a)))
 }

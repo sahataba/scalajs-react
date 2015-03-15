@@ -111,7 +111,7 @@ trait Service extends Api{
   }
 
   def create(user:User):Future[User] = {
-    TableModel.create(user).map(id => User._id set Some(id) apply user)
+    TableModel.create(user).map(created => User._id set Some(created.id) apply user)
   }
 
   def delete(id:Id[User]):Future[Deleted[User]] = {
@@ -122,7 +122,7 @@ trait Service extends Api{
     TableModel.fetchThenUpdate(Id(id), User._lastName.set(lastname))
   }
 
-  def publish(id:Int):Future[User] = {
-    TableModel.fetchThenUpdate(Id(id), User._status.set(Finished))
+  def approve(id:Int):Future[User] = {
+    TableModel.fetchThenUpdate(Id(id), User._status.set(Approved))
   }
 }
