@@ -47,7 +47,7 @@ case object Saved extends IDLifecycle
 
 case class Id[E](value:Int) extends AnyVal
 case class Deleted[E](id:Id[E])
-case class Created[E](id:Id[E])
+case class Created[E](value:E)
 
 
 trait EntityLifecycle {
@@ -122,7 +122,7 @@ object User {
 }
 
 trait Create[E] {
-  def create(entity:E):Future[E]
+  def create(entity:E):Future[Created[E]]
 }
 
 trait Delete[E] {
@@ -132,6 +132,6 @@ trait Delete[E] {
 trait Api extends Create[User] with Delete[User]{
 
   def users(user:UserSession): Future[Seq[User]]
-  def create(entity:User):Future[User]
+  def create(entity:User):Future[Created[User]]
   def delete(id:Id[User]):Future[Deleted[User]]
 }

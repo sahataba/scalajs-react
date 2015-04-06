@@ -129,5 +129,5 @@ trait CreateDBAction[E,T <: TableWithId[E]] {
   val db:Database
   val table: TableQuery[T]
 
-  def create(entity:E):Future[Created[E]] = (db.run((table returning table.map(_.id)) += entity)).map(a => Created(Id[E](a)))
+  def create(entity:E):Future[Created[Id[E]]] = (db.run((table returning table.map(_.id)) += entity)).map(a => Created(Id(a)))
 }

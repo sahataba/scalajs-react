@@ -110,8 +110,8 @@ trait Service extends Api{
     TableModel.list2
   }
 
-  def create(user:User):Future[User] = {
-    TableModel.create(user).map(created => User._id set Some(created.id) apply user)
+  def create(user:User):Future[Created[User]] = {
+    TableModel.create(user).map(created => User._id set Some(created.value) apply user).map(e => Created(e))
   }
 
   def delete(id:Id[User]):Future[Deleted[User]] = {

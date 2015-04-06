@@ -34,7 +34,7 @@ object ReactExamples {
       Client[example.Api].
         create(user).
         call().
-        map(u => store() = store().copy(users = store().users ++ List(u)))
+        map(created => store() = store().copy(users = store().users ++ List(created.value)))
     }
     def removeUser(user:User) = {
       Client[example.Api].
