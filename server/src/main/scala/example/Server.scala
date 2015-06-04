@@ -4,16 +4,17 @@ import upickle._
 
 import akka.actor.ActorSystem
 import akka.event.{LoggingAdapter, Logging}
-import akka.http.Http
-import akka.http.client.RequestBuilding
-import akka.http.marshallers.sprayjson.SprayJsonSupport._
-import akka.http.marshalling.ToResponseMarshallable
-import akka.http.model.{MediaTypes, HttpResponse, HttpRequest, HttpEntity}
-import akka.http.model.StatusCodes._
-import akka.http.server.Directives._
-import akka.http.unmarshalling.Unmarshal
-import akka.stream.FlowMaterializer
-import akka.stream.scaladsl.{Sink, Source}
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.client.RequestBuilding
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.model.{MediaTypes, HttpResponse, HttpRequest, HttpEntity}
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.stream.{ActorFlowMaterializer, FlowMaterializer}
+import akka.stream.scaladsl.{Flow, Sink, Source}
+
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -67,12 +68,12 @@ object AutowireServer extends autowire.Server[String, upickle.Reader, upickle.Wr
 object AkkaHttpMicroservice extends App with Service {
   override implicit val system = ActorSystem()
   override implicit val executor = system.dispatcher
-  override implicit val materializer = FlowMaterializer()
+  override implicit val materializer = ActorFlowMaterializer()
 
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
 
-  Http().bind(interface = config.getString("http.interface"), port = config.getInt("http.port")).startHandlingWith(routes)
+  Http().bindAndHandle(routes, interface = config.getString("http.interface"), port = config.getInt("http.port"))//.startHandlingWith(routes)
 }
 
 trait Service extends Api{

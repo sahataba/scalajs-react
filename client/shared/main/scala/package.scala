@@ -45,7 +45,7 @@ sealed trait IDLifecycle
 case object Draft extends IDLifecycle
 case object Saved extends IDLifecycle
 
-case class Id[E](value:Int) extends AnyVal
+case class Id[E](value:Int)
 case class Deleted[E](id:Id[E])
 case class Created[E](value:E)
 

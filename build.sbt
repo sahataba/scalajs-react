@@ -36,7 +36,7 @@ val client = cross.js.in(file("client"))
 
 val akkahttpdependencies = {
   val akkaV       = "2.3.9"
-  val akkaStreamV = "1.0-M2"
+  val akkaStreamV = "1.0-RC3"
   val scalaTestV  = "2.2.1"
   Seq(
     "com.typesafe.akka" %% "akka-actor"                        % akkaV,
