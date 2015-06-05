@@ -27,12 +27,15 @@ val client = cross.js.in(file("client"))
                     .settings(scalaJSSettings ++workbenchSettings:_*)
                     .settings(
   name := "Client",
-  libraryDependencies ++= Seq(
-    "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
-    "com.github.japgolly.scalajs-react" %%% "core" % "0.7.0",
-    "com.github.japgolly.fork.monocle" %%% "monocle-core" % "1.0.1",
-    "com.github.japgolly.fork.monocle" %%% "monocle-macro" % "1.0.1"
-  ),
+  libraryDependencies ++= {
+    val monocleV = "1.0.1"
+    Seq(
+      "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
+      "com.github.japgolly.scalajs-react" %%% "core" % "0.7.0",
+      "com.github.japgolly.fork.monocle" %%% "monocle-core" % monocleV,
+      "com.github.japgolly.fork.monocle" %%% "monocle-macro" % monocleV
+    )
+  },
   //jsDependencies += "org.webjars" % "react" % "0.12.1" / "react-with-addons.js" commonJSName "React",
   bootSnippet := "ReactExample().main();"
 )
