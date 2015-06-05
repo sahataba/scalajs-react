@@ -19,8 +19,6 @@ val cross = new utest.jsrunner.JsCrossBuild(
     "com.lihaoyi" %%% "autowire" % "0.2.3",
     "com.scalatags" %%% "scalatags" % "0.4.2",
     "com.scalarx" %%% "scalarx" % "0.2.6",
-    "com.github.japgolly.nyaya" %%% "nyaya-core" % "0.5.0",
-    "com.github.japgolly.nyaya" %%% "nyaya-test" % "0.5.0" % "test",
     "com.lihaoyi" %%% "utest" % "0.2.4"
   )
 )
