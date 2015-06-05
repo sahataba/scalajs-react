@@ -3,6 +3,8 @@ addSbtPlugin("org.scala-lang.modules.scalajs" % "scalajs-sbt-plugin" % "0.5.5")
 
 addSbtPlugin("org.flywaydb" % "flyway-sbt" % "3.1")
 
+addSbtPlugin("com.lihaoyi" % "scalatex-sbt-plugin" % "0.3.1")
+
 resolvers += "Flyway" at "http://flywaydb.org/repo"
 
 resolvers += "spray repo" at "http://repo.spray.io"

@@ -7,6 +7,9 @@ import com.lihaoyi.workbench.Plugin._
 import spray.revolver.AppProcess
 import spray.revolver.RevolverPlugin.Revolver
 
+scalatex.SbtPlugin.projectSettings
+scalaVersion := "2.11.4"
+
 val cross = new utest.jsrunner.JsCrossBuild(
   scalaVersion := "2.11.4",
   version := "0.1-SNAPSHOT",
@@ -67,4 +70,11 @@ val server = cross.jvm.in(file("server"))
     (fastOptJS in (client, Compile)).value
     (artifactPath in (client, Compile, fastOptJS)).value
   }
+)
+
+lazy val readme = scalatex.ScalatexReadme(
+  projectId = "readme",
+  wd = file(""),
+  url = "https://github.com/lihaoyi/scalatex/tree/master",
+  source = "Readme"
 )

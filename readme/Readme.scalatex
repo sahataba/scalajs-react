@@ -1,0 +1,60 @@
+@import Main._
+@import scalatex.site._
+
+
+@def exampleWrapper(f: Frag*) = Seq(
+  hr,
+  div(
+    opacity:="0.6",
+    fontStyle.oblique,
+    f
+  ),
+  hr
+)
+@def pairs(frags: Frag*) = div(frags, div(clear:="both"))
+@def half(frags: Frag*) = div(frags, width:="50%", float.left)
+
+@a(
+  href:="https://github.com/sahataba/olog",
+  position.absolute,
+  top:=0,right:=0,border:=0,
+  img(
+    src:="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67",
+    alt:="Fork me on GitHub"
+  )
+)
+@sect("Olog")
+
+  @p
+    @a("github/sahataba", href:="https://github.com/sahataba") is a Rudolf Markulin github account.
+  @ul
+    @li
+      Extracting the structure of the document as a @sect.ref{Section}, which you can use to generate a navigation bar or @sect.ref{Generating a Table of Contents}
+    @li
+      It is an app for tracking everything regarding Rudolf Markulin.
+    @li
+      It should track invoices for olog
+    @li
+      Mine personal income over the years.
+    @li
+      It should have contact list, available via some protocol to external apps. Replacement for google contacts.
+
+
+  @sect{Getting Started}
+    @p
+      To get started with Scalatex, add the following to your @code{project/build.sbt}:
+
+    @hl.scala
+      addSbtPlugin("com.lihaoyi" % "scalatex-sbt-plugin")
+
+    @p
+      And the following to your project in your @code{build.sbt}:
+
+    @hl.scala
+      scalatex.SbtPlugin.projectSettings
+
+      scalaVersion := "2.11.4"
+
+
+    @p
+      There we have it, your first Scalatex document! You can put this on gh-pages, use it on a website, or where-ever you want.
