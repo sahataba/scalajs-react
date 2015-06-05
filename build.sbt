@@ -8,6 +8,7 @@ import spray.revolver.AppProcess
 import spray.revolver.RevolverPlugin.Revolver
 
 scalatex.SbtPlugin.projectSettings
+
 scalaVersion := "2.11.4"
 
 val cross = new utest.jsrunner.JsCrossBuild(
@@ -19,7 +20,8 @@ val cross = new utest.jsrunner.JsCrossBuild(
     "com.scalatags" %%% "scalatags" % "0.4.2",
     "com.scalarx" %%% "scalarx" % "0.2.6",
     "com.github.japgolly.nyaya" %%% "nyaya-core" % "0.5.0",
-    "com.github.japgolly.nyaya" %%% "nyaya-test" % "0.5.0" % "test"
+    "com.github.japgolly.nyaya" %%% "nyaya-test" % "0.5.0" % "test",
+    "com.lihaoyi" %%% "utest" % "0.2.4"
   )
 )
 val client = cross.js.in(file("client"))
