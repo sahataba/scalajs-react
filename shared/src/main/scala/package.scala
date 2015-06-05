@@ -86,7 +86,11 @@ trait Delete[E] {
   def delete(id:Id[E]):Future[Deleted[E]]
 }
 
-trait Api extends Create[User] with Delete[User]{
+trait Query[E] {
+  def all:Future[Seq[E]]
+}
+
+trait Api /*extends Create[User] with Delete[User]*/{
 
   def users(user:UserSession): Future[Seq[User]]
   def create(entity:User):Future[Created[User]]

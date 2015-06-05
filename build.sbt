@@ -1,44 +1,6 @@
-// Turn this project into a Scala.js project by importing these settings
+name := "Olog"
 
-import sbt.Keys._
-import scala.scalajs.sbtplugin.ScalaJSPlugin._
-import ScalaJSKeys._
-import com.lihaoyi.workbench.Plugin._
-import spray.revolver.AppProcess
-import spray.revolver.RevolverPlugin.Revolver
-
-scalatex.SbtPlugin.projectSettings
-
-scalaVersion := "2.11.4"
-
-val cross = new utest.jsrunner.JsCrossBuild(
-  scalaVersion := "2.11.4",
-  version := "0.1-SNAPSHOT",
-  libraryDependencies ++= Seq(
-    "com.lihaoyi" %%% "upickle" % "0.2.5",
-    "com.lihaoyi" %%% "autowire" % "0.2.3",
-    "com.scalatags" %%% "scalatags" % "0.4.2",
-    "com.scalarx" %%% "scalarx" % "0.2.6",
-    "com.lihaoyi" %%% "utest" % "0.2.4"
-  )
-)
-val client = cross.js.in(file("client"))
-                    .copy(id="client")
-                    .settings(scalaJSSettings ++workbenchSettings:_*)
-                    .settings(
-  name := "Client",
-  libraryDependencies ++= {
-    val monocleV = "1.0.1"
-    Seq(
-      "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
-      "com.github.japgolly.scalajs-react" %%% "core" % "0.7.0",
-      "com.github.japgolly.fork.monocle" %%% "monocle-core" % monocleV,
-      "com.github.japgolly.fork.monocle" %%% "monocle-macro" % monocleV
-    )
-  },
-  //jsDependencies += "org.webjars" % "react" % "0.12.1" / "react-with-addons.js" commonJSName "React",
-  bootSnippet := "ReactExample().main();"
-)
+scalaVersion := "2.11.6"
 
 val akkahttpdependencies = {
   val akkaV       = "2.3.9"
@@ -55,25 +17,64 @@ val akkahttpdependencies = {
   )
 }
 
-val server = cross.jvm.in(file("server"))
-                    .copy(id="server")
-                    .settings(Revolver.settings:_*)
-                    .settings(
-  name := "Server",
-  libraryDependencies ++= akkahttpdependencies ++ Seq(
-    "org.webjars" % "bootstrap" % "3.2.0",
-    "com.typesafe.slick" %% "slick" % "3.0.0-RC1",
-    "org.slf4j" % "slf4j-nop" % "1.6.4",
-    "com.h2database" % "h2" % "1.3.170",
-    "org.flywaydb" % "flyway-core" % "3.0",
-    "com.github.julien-truffaut"  %%  "monocle-core" % "1.0.1",
-    "com.github.julien-truffaut"  %%  "monocle-macro" % "1.0.1"
-  ),
-  (resources in Compile) += {
-    (fastOptJS in (client, Compile)).value
-    (artifactPath in (client, Compile, fastOptJS)).value
-  }
-)
+lazy val root = project.
+  aggregate(fooJS, fooJVM).
+  settings(
+    publish := {},
+    publishLocal := {}
+  )
+
+lazy val p1 =
+  crossProject.
+  in(file(".")).
+  settings(
+    name := "olog",
+    version := "0.1-SNAPSHOT",
+    scalaVersion := "2.11.6",
+    libraryDependencies ++= Seq(
+      "com.lihaoyi" %%% "upickle" % "0.2.8",
+      "com.lihaoyi" %%% "autowire" % "0.2.5",
+      "com.lihaoyi" %%% "scalatags" % "0.5.2",
+      "com.lihaoyi" %%% "scalarx" % "0.2.8",
+      "com.lihaoyi" %%% "utest" % "0.3.1"
+    )
+  ).
+  jvmSettings(
+    libraryDependencies ++= akkahttpdependencies ++ Seq(
+      "org.webjars" % "bootstrap" % "3.2.0",
+      "com.typesafe.slick" %% "slick" % "3.0.0-RC1",
+      "org.slf4j" % "slf4j-nop" % "1.6.4",
+      "com.h2database" % "h2" % "1.3.170",
+      "org.flywaydb" % "flyway-core" % "3.0",
+      "com.github.julien-truffaut"  %%  "monocle-core" % "1.0.1",
+      "com.github.julien-truffaut"  %%  "monocle-macro" % "1.0.1"
+    )
+  ).
+  jsSettings(
+    libraryDependencies ++= {
+      val monocleV = "1.1.1"
+      Seq(
+        "org.scala-js" %%% "scalajs-dom" % "0.8.0",
+        "com.github.japgolly.scalajs-react" %%% "core" % "0.9.0",
+        "com.github.japgolly.fork.monocle" %%% "monocle-core" % monocleV,
+        "com.github.japgolly.fork.monocle" %%% "monocle-macro" % monocleV
+      )
+    },
+    bootSnippet := "ReactExample().main();"
+  )
+
+
+lazy val fooJVM =
+  p1.jvm.
+    settings(
+      (resources in Compile) += {
+        (fastOptJS in (p1.js, Compile)).value
+        (artifactPath in (fooJS, Compile, fastOptJS)).value
+      }
+    ).
+    settings(Revolver.settings:_*)
+
+lazy val fooJS = p1.js
 
 lazy val readme = scalatex.ScalatexReadme(
   projectId = "readme",

@@ -29,7 +29,7 @@ object Template{
       head(
         title("Example Scala.js application"),
         meta(httpEquiv:="Content-Type", content:="text/html; charset=UTF-8"),
-        script(`type`:="text/javascript", src:="/client-fastopt.js"),
+        script(`type`:="text/javascript", src:="/olog-fastopt.js"),
         script(`type`:="text/javascript", src:="//localhost:12345/workbench.js"),
         script(`type` := "text/javascript", src:="http://fb.me/react-with-addons-0.12.1.js"),
         link(
@@ -56,7 +56,7 @@ object Template{
       ),
       body(margin:=0)(
         div(id:="eg1"),
-        script("ReactExamples().main()")
+        script("example.ReactExamples().main()")
       )
     )
 }

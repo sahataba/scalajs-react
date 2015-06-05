@@ -4,12 +4,13 @@ import scala.concurrent.Future
 import scala.scalajs.js.annotation.JSExport
 import scalajs.concurrent.JSExecutionContext.Implicits.runNow
 import org.scalajs.dom.{console}
+import org.scalajs.dom.ext._
 
 @JSExport
 object Client extends autowire.Client[String, upickle.Reader, upickle.Writer]{
   override def doCall(req: Request): Future[String] = {
     console.log("miha")
-    org.scalajs.dom.extensions.Ajax.post(
+    Ajax.post(
       url = "/api/" + req.path.mkString("/"),
       data = upickle.write(req.args)
     ).map(_.responseText)
