@@ -39,7 +39,7 @@
     @li
       It should have contact list, available via some protocol to external apps. Replacement for google contacts.
 
-  @hl.ref(wd/'client/'shared/'main/'scala/"package.scala")
+  @hl.ref(wd/'shared/'src/'main/'scala/"package.scala")
 
   @sect{Getting Started}
     @p
