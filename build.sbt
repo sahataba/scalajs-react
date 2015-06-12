@@ -1,3 +1,7 @@
+import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
+
+enablePlugins(JavaAppPackaging)
+
 name := "Olog"
 
 scalaVersion := "2.11.6"

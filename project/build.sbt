@@ -5,7 +5,7 @@ addSbtPlugin("org.flywaydb" % "flyway-sbt" % "3.1")
 
 addSbtPlugin("com.lihaoyi" % "scalatex-sbt-plugin" % "0.3.1")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "0.8.0")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.0.2")
 
 resolvers += "Flyway" at "http://flywaydb.org/repo"
 
