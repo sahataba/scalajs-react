@@ -1,6 +1,6 @@
-import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
+import com.typesafe.sbt.packager.archetypes.JavaServerAppPackaging
 
-enablePlugins(JavaAppPackaging)
+enablePlugins(JavaServerAppPackaging)
 
 name := "Olog"
 
