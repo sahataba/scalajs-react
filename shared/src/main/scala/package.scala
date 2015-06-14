@@ -96,3 +96,10 @@ trait Api /*extends Create[User] with Delete[User]*/{
   def create(entity:User):Future[Created[User]]
   def delete(id:Id[User]):Future[Deleted[User]]
 }
+
+case class TodoItem(description:String)
+
+trait TodoApi {
+  def all():Future[Seq[TodoItem]]
+  def create(item:TodoItem):Future[TodoItem]
+}

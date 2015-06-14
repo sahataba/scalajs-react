@@ -76,7 +76,7 @@ object AkkaHttpMicroservice extends App with Service {
   Http().bindAndHandle(routes, interface = config.getString("http.interface"), port = config.getInt("http.port"))//.startHandlingWith(routes)
 }
 
-trait Service extends Api{
+trait Service extends Api with TodoApi{
 
   implicit val system: ActorSystem
   implicit def executor: ExecutionContextExecutor
@@ -105,6 +105,16 @@ trait Service extends Api{
           ))
         }
       }
+    } ~
+    (post & entity(as[String])) { entity =>
+      path("todoapi" / Segments){ s =>
+        complete {
+          ToResponseMarshallable(
+            AutowireServer.route[TodoApi](AkkaHttpMicroservice)(
+              autowire.Core.Request(s, upickle.read[Map[String, String]](entity))
+            ))
+        }
+      }
     }
 
   def users(user:UserSession): Future[Seq[User]] = {
@@ -125,5 +135,16 @@ trait Service extends Api{
 
   def approve(id:Int):Future[User] = {
     TableModel.fetchThenUpdate(Id(id), User._status.set(Approved))
+  }
+
+  var todos = List[TodoItem](TodoItem("ines"))
+
+  def all():Future[Seq[TodoItem]] = Future {
+    todos
+  }
+
+  def create(item:TodoItem):Future[TodoItem] = Future {
+    todos = item :: todos
+    item
   }
 }

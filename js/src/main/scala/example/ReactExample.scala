@@ -1,5 +1,7 @@
 package example
 
+import org.scalajs.dom
+
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom.{console, document, Node}
@@ -20,13 +22,16 @@ import monocle._
 
 import Addons.ReactCssTransitionGroup
 
-
 @JSExport
 object ReactExamples {
 
   @JSExport
   def main(): Unit = {
-    example1(document getElementById "eg1")
+    import japgolly.scalajs.react.extra.router2._
+    //example1(document getElementById "eg1")
+    val router = Pages.router
+    router() render dom.document.body
+
   }
 
   case class AppState(user:UserSession, var users:List[User]) {
@@ -49,13 +54,6 @@ object ReactExamples {
   Client[example.Api].users(store().user).call().map(_.toList).map{t =>
     store() = store().copy(users = t)
   }
-
-  /*
-  object dispatcher {
-    var state:AppState = Await.result(Client[example.Api].users().call().map(_.toList).map(users => AppState(users = users)), 2 seconds)
-    console.log("TTTT " + state)
-  }*/
-
 
   def example1(mountNode: Node) = {
     Obs(store){
