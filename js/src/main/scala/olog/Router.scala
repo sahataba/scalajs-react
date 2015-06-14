@@ -8,9 +8,6 @@ import japgolly.scalajs.react._, vdom.prefix_<^._, ScalazReact._
 import japgolly.scalajs.react.extra._
 import japgolly.scalajs.react.extra.router2._
 
-import chandu0101.scalajs.react.components.fascades.LatLng
-import chandu0101.scalajs.react.components.maps.GoogleMap
-
 object Pages {
 
   sealed trait Page
@@ -25,7 +22,7 @@ object Pages {
     (trimSlashes
       | staticRoute(root,     Home) ~> render(<.div("hh"))
       | staticRoute("#doc",   Doco) ~> render(<.div(TodoApp.TodoApp()))
-      | staticRoute("#about", About) ~> render(<.div(GoogleMap(width = 600 ,height = 500 ,center = LatLng(45.800403, 15.721538) , zoom = 8)))
+      | staticRoute("#about", About) ~> render(<.div(AboutPage()))
       )
       .notFound(redirectToPage(Home)(Redirect.Replace))
       .renderWith(layout)
