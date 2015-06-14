@@ -1,5 +1,6 @@
-package example
+package olog
 
+import olog.TodoApp
 import org.scalajs.dom
 import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
@@ -23,7 +24,7 @@ object Pages {
 
     (trimSlashes
       | staticRoute(root,     Home) ~> render(<.div("hh"))
-      | staticRoute("#doc",   Doco) ~> render(<.div(example.TodoApp.TodoApp()))
+      | staticRoute("#doc",   Doco) ~> render(<.div(TodoApp.TodoApp()))
       | staticRoute("#about", About) ~> render(<.div(GoogleMap(width = 600 ,height = 500 ,center = LatLng(45.800403, 15.721538) , zoom = 8)))
       )
       .notFound(redirectToPage(Home)(Redirect.Replace))

@@ -1,4 +1,4 @@
-package example
+package olog
 
 import scala.concurrent._
 

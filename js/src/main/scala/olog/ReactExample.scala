@@ -1,4 +1,4 @@
-package example
+package olog
 
 import org.scalajs.dom
 
@@ -36,13 +36,13 @@ object ReactExamples {
 
   case class AppState(user:UserSession, var users:List[User]) {
     def createUser(user:User):Future[Unit] = {
-      Client[example.Api].
+      Client[olog.Api].
         create(user).
         call().
         map(created => store() = store().copy(users = store().users ++ List(created.value)))
     }
     def removeUser(user:User) = {
-      Client[example.Api].
+      Client[olog.Api].
         delete(user.id.get).
         call().
         map(_ => store() = store().copy(users = users.filter( _ != user)))
@@ -51,7 +51,7 @@ object ReactExamples {
 
   val store = Var(AppState(UserSession("rudi"), List()))
 
-  Client[example.Api].users(store().user).call().map(_.toList).map{t =>
+  Client[olog.Api].users(store().user).call().map(_.toList).map{t =>
     store() = store().copy(users = t)
   }
 
@@ -72,7 +72,7 @@ object ReactExamples {
 
   val TodoList = ReactComponentB[List[User]]("TodoList")
   .render(P => {
-    ReactCssTransitionGroup("example",  component = "table")(
+    ReactCssTransitionGroup("olog",  component = "table")(
       thead(
         tr(
           th("Actions"),

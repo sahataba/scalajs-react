@@ -1,4 +1,4 @@
-package example
+package olog
 
 import slick.driver.H2Driver.api._
 
@@ -25,24 +25,24 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
   { utc => Date(utc) } // map Int to Bool
   )
 
-  implicit val boolColumnType2 = MappedColumnType.base[example.Role, String](
+  implicit val boolColumnType2 = MappedColumnType.base[olog.Role, String](
     RoleConverter.write, (str:String) => RoleConverter.read(str).right.get
   )
 
-  implicit val statusColumnType2 = MappedColumnType.base[example.Status[User], String](
+  implicit val statusColumnType2 = MappedColumnType.base[olog.Status[User], String](
     StatusConverter.write, (str:String) => StatusConverter.read(str).right.get
   )
 
-  implicit val emailColumnType2 = MappedColumnType.base[example.Email, String](
-    (email:Email) => email.email, example.Email apply _
+  implicit val emailColumnType2 = MappedColumnType.base[olog.Email, String](
+    (email:Email) => email.email, olog.Email apply _
   )
 
   def firstName = column[String]("FIRST_NAME")
   def lastName = column[String]("LAST_NAME")
-  def email = column[example.Email]("EMAIL")
+  def email = column[olog.Email]("EMAIL")
   def birthday = column[Date]("BIRTHDAY")
-  def role = column[example.Role]("ROLE")
-  def status = column[example.Status[User]]("STATUS")
+  def role = column[olog.Role]("ROLE")
+  def status = column[olog.Status[User]]("STATUS")
 
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
@@ -86,7 +86,7 @@ object TableModel extends CRUD[User, Users]{
 
   val createActions = DBIO.seq(
     table.ddl.create,
-    table += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = example.Date(1l), role = Admin, status = Approved)
+    table += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = olog.Date(1l), role = Admin, status = Approved)
   )
 
   db.run(createActions)

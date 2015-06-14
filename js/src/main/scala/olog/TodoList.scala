@@ -1,5 +1,6 @@
-package example
+package olog
 
+import olog.TodoItem
 import japgolly.scalajs.react._, vdom.prefix_<^._
 import scala.concurrent.ExecutionContext.Implicits.global
 import autowire._
@@ -25,11 +26,11 @@ object TodoApp {
     def handleSubmit(e: ReactEventI) = {
       e.preventDefault()
       val item = TodoItem($.get().text)
-      TodoClient[example.TodoApi].create(item).call().map(i => $.modState(s => s.copy(items = i :: s.items )))
+      TodoClient[olog.TodoApi].create(item).call().map(i => $.modState(s => s.copy(items = i :: s.items )))
     }
 
     def init() = for {
-      items <- TodoClient[example.TodoApi].all().call()
+      items <- TodoClient[olog.TodoApi].all().call()
     } yield {
         $.modState(s => s.copy(items = items.toList))
       }
