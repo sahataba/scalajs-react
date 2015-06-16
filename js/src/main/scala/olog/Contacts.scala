@@ -22,17 +22,7 @@ import monocle._
 
 import Addons.ReactCssTransitionGroup
 
-@JSExport
-object ReactExamples {
-
-  @JSExport
-  def main(): Unit = {
-    import japgolly.scalajs.react.extra.router2._
-    //example1(document getElementById "eg1")
-    val router = Pages.router
-    router() render dom.document.body
-
-  }
+object Contacts {
 
   case class AppState(user:UserSession, var users:List[User]) {
     def createUser(user:User):Future[Unit] = {

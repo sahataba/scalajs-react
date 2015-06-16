@@ -6,6 +6,8 @@ name := "Olog"
 
 scalaVersion := "2.11.6"
 
+resolvers += Resolver.mavenLocal
+
 val akkahttpdependencies = {
   val akkaV       = "2.3.9"
   val akkaStreamV = "1.0-RC3"

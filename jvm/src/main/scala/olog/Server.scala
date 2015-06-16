@@ -56,7 +56,7 @@ object Template{
       ),
       body(margin:=0)(
         div(id:="eg1"),
-        script("olog.ReactExamples().main()")
+        script("olog.ReactApp().main()")
       )
     )
 }
