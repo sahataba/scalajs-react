@@ -38,18 +38,15 @@ object Pages {
 
   val navMenu = ReactComponentB[RouterCtl[Page]]("Menu")
     .render { ctl =>
-    def nav(name: String, target: Page) =
-      <.li(
-        ^.cls := "navbar-brand active",
-        ctl setOnClick target,
-        name)
-    <.div(
-      ^.cls := "navbar navbar-default",
+    def nav(name: String, target: Page) = <.li(<.a(ctl setOnClick target,name))
+    <.nav(<.div(
+      ^.cls := "nav-wrapper",
+      <.a(^.cls:="brand-logo center","Logo"),
       <.ul(
-        ^.cls := "navbar-header",
+        ^.cls := "right",
         nav("Home",          Home),
         nav("About",         About),
-        nav("Documentation", Doco)))
+        nav("Documentation", Doco))))
   }
     .configure(Reusability.shouldComponentUpdate)
     .build

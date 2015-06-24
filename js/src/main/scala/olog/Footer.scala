@@ -5,12 +5,12 @@ import japgolly.scalajs.react.vdom.prefix_<^._
 import scalacss.ScalaCssReact._
 
 object Footer {
-  
+
   val component = ReactComponentB.static("Footer",
-    <.footer(Style.footer,
-    <.div(
-      ^.cls := "container",
-      <.p(^.paddingTop := "5px", "OLOG, obrt za informaticko savjetovanje"))
+    <.footer(
+      ^.cls:="page-footer",
+      <.div(^.cls := "container","testing"),
+      <.div(^.cls := "footer-copyright", "OLOG, obrt za informaticko savjetovanje")
     )
   ).buildU
 

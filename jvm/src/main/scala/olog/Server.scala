@@ -32,11 +32,9 @@ object Template{
         script(`type`:="text/javascript", src:="/olog-fastopt.js"),
         script(`type`:="text/javascript", src:="//localhost:12345/workbench.js"),
         script(`type` := "text/javascript", src:="http://fb.me/react-with-addons-0.12.1.js"),
-        link(
-          rel:="stylesheet",
-          `type`:="text/css",
-          href:="META-INF/resources/webjars/bootstrap/3.2.0/css/bootstrap.min.css"
-        ),
+        link(rel:="stylesheet",`type`:="text/css",href:="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css"),
+        script(`type`:="text/javascript",src:="https://code.jquery.com/jquery-2.1.1.min.js"),
+        script(`type`:="text/javascript",src:="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"),
         style("""
           .example-enter {
             opacity: 0.01;
