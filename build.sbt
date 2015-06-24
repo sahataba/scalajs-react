@@ -59,12 +59,12 @@ lazy val p1 =
   jsSettings(
     libraryDependencies ++= {
       val monocleV = "1.1.1"
-      val reactV = "0.9.1-SNAPSHOT"
+      val reactV = "0.9.1"
       Seq(
         "org.scala-js" %%% "scalajs-dom" % "0.8.0",
         "com.github.japgolly.scalajs-react" %%% "core" % reactV,
         "com.github.japgolly.scalajs-react" %%% "extra" % reactV,
-        "com.chandu0101.scalajs-react-components" %%% "core" % "0.0.1-SNAPSHOT",
+        "com.chandu0101.scalajs-react-components" %%% "core" % "0.1.0",
         "com.github.japgolly.fork.monocle" %%% "monocle-core" % monocleV,
         "com.github.japgolly.fork.monocle" %%% "monocle-macro" % monocleV
       )
