@@ -27,4 +27,7 @@ object Style extends Inline {
     padding(30.px),
     flexDirection.column,
     alignItems.center)
+  val footer = style(
+    backgroundColor.green,
+    padding(35.px))
 }

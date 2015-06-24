@@ -55,7 +55,6 @@ object Template{
               """)
       ),
       body(margin:=0)(
-        div(id:="eg1"),
         script("olog.ReactApp().main()")
       )
     )

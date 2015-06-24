@@ -7,6 +7,7 @@ import scala.scalajs.js.annotation.JSExport
 import japgolly.scalajs.react._, vdom.prefix_<^._, ScalazReact._
 import japgolly.scalajs.react.extra._
 import japgolly.scalajs.react.extra.router2._
+import scalacss.ScalaCssReact._
 
 object Pages {
 
@@ -20,7 +21,7 @@ object Pages {
     import dsl._
 
     (trimSlashes
-      | staticRoute(root,     Home) ~> render(<.div("hh"))
+      | staticRoute(root,     Home) ~> render(<.div(Style.content)("hh"))
       | staticRoute("#doc",   Doco) ~> render(<.div(TodoApp.TodoApp()))
       | staticRoute("#about", About) ~> render(<.div(AboutPage()))
       )
@@ -32,7 +33,8 @@ object Pages {
   def layout(c: RouterCtl[Page], r: Resolution[Page]) =
     <.div(
       navMenu(c),
-      <.div(^.cls := "container", r.render()))
+      <.div(^.cls := "container", r.render()),
+      Footer())
 
   val navMenu = ReactComponentB[RouterCtl[Page]]("Menu")
     .render { ctl =>

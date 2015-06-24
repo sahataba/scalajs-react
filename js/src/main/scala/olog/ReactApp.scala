@@ -15,6 +15,6 @@ object ReactApp extends JSApp {
   override def main(): Unit = {
     AppCSS.load
     console.log("CSS loaded")
-    Pages.router().render(dom.document.getElementById("eg1"))
+    Pages.router().render(dom.document.body)
   }
 }
