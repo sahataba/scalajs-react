@@ -10,7 +10,9 @@ object Footer {
     <.footer(
       ^.cls:="page-footer",
       <.div(^.cls := "container","testing"),
-      <.div(^.cls := "footer-copyright", "OLOG, obrt za informaticko savjetovanje")
+      <.div(
+        ^.cls := "footer-copyright",
+         <.div(^.cls:="container","OLOG, obrt za informaticko savjetovanje"))
     )
   ).buildU
 
