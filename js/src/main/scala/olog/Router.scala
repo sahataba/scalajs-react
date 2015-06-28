@@ -12,9 +12,10 @@ import scalacss.ScalaCssReact._
 object Pages {
 
   sealed trait Page
-  case object Home                 extends Page
-  case object Doco                 extends Page
-  case object About                 extends Page
+  case object Home  extends Page
+  case object Doco  extends Page
+  case object About extends Page
+  case object Login extends Page
 
 
   val routerConfig = RouterConfigDsl[Page].buildConfig { dsl =>
@@ -24,6 +25,7 @@ object Pages {
       | staticRoute(root,     Home) ~> render(<.div(Style.content)("hh"))
       | staticRoute("#doc",   Doco) ~> render(<.div(TodoApp.TodoApp()))
       | staticRoute("#about", About) ~> render(<.div(AboutPage()))
+      | staticRoute("#login", Login) ~> render(<.div(LoginPage()))
       )
       .notFound(redirectToPage(Home)(Redirect.Replace))
       .renderWith(layout)
@@ -46,7 +48,8 @@ object Pages {
         ^.cls := "right",
         nav("Home",          Home),
         nav("About",         About),
-        nav("Documentation", Doco))))
+        nav("Documentation", Doco),
+        nav("Login",         Login))))
   }
     .configure(Reusability.shouldComponentUpdate)
     .build
