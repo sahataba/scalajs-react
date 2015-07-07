@@ -146,7 +146,7 @@ trait Service extends Api with TodoApi{
   }
 
   def login(credentials:Account.Credentials):Future[Option[Account.Session]] = {
-    Future(Some(Account.Session(id = "1")))
+    Future(Some(Account.Session(id = Id(1))))
   }
 
 }

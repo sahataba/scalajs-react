@@ -55,7 +55,8 @@ object Email {
 
 sealed trait Account
 object Account {
-  case class Session(id:String) extends Account
+  case class Session(id:Id[User]) extends Account
+
   case class User(
                    firstName: String,
                    lastName:String,
