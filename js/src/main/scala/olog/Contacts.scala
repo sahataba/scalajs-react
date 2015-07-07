@@ -124,11 +124,13 @@ object Contacts {
   def ddParse = (v:String) => Right(v)
   def id[E](x:E) = x
 
+  val rolefield = EditField[User,Role](label = "Role: ", lens = User._role, parse = RoleConverter.read, write = RoleConverter.write)
   def inputs = List(
     EditField[User,String](label = "First Name: ", lens = User._firstName, parse = ddParse, write = id),
     EditField[User,String](label = "Last Name: ", lens = User._lastName, parse = ddParse, write = id),
     EditField[User,Email](label = "Email: ", lens = User._email, Email.parse _, write = Email._email get),
-    EditField[User,Role](label = "Role: ", lens = User._role, parse = RoleConverter.read, write = RoleConverter.write))
+    rolefield
+    )
 
   val TodoApp = ReactComponentB[AppState]("TodoApp")
     .initialState(User.dummy())
@@ -141,7 +143,7 @@ object Contacts {
           inputs map (field => div(label(field.label),input(onChange ==> B.onFieldChange(field), value := EditField.value(S, field)))),
           div(
             label("Role: "),
-            select(onChange ==> B.onFieldChange(EditField(label = "Role", User._role, parse = RoleConverter.read, write = RoleConverter.write)), value := RoleConverter.write(S.role))(
+            select(onChange ==> B.onFieldChange(rolefield), value := RoleConverter.write(S.role))(
               RoleConverter.values.map(role => option(value:=RoleConverter.write(role))(role.toString))
             )
           ),
