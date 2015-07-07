@@ -77,16 +77,13 @@ object Account {
     val _id = lenser(_.id)
     val _status = lenser(_.status)
   }
+  case class Credentials(email:String, password:String)
+  object Credentials {
+    val lenser = Lenser[Credentials]
+    val _email = lenser(_.email)
+    val _password = lenser(_.password)
+  }
 }
-
-case class Credentials(email:String, password:String)
-object Credentials {
-  val lenser = Lenser[Credentials]
-  val _email = lenser(_.email)
-  val _password = lenser(_.password)
-}
-
-
 
 trait Create[E] {
   def create(entity:E):Future[Created[E]]

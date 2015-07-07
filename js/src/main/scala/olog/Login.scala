@@ -8,7 +8,7 @@ import monocle.std.option.some
 
 object LoginPage {
 
-  import Account.UserSession
+  import Account.{UserSession, Credentials}
 
   case class State(user: Option[UserSession], credentials:Option[Credentials])
   object State {
