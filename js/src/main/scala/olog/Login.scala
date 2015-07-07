@@ -4,15 +4,16 @@ import japgolly.scalajs.react._, vdom.prefix_<^._
 import monocle.macros._
 import monocle.syntax._
 import monocle._
+import monocle.std.option.some
 
 object LoginPage {
 
-  case class State(user: Option[UserSession], credentials:Credentials)
+  case class State(user: Option[UserSession], credentials:Option[Credentials])
   object State {
     val lenser = Lenser[State]
     val _credentials = lenser(_.credentials)
-    val _email = _credentials composeLens Credentials._email
-    val _password = _credentials composeLens Credentials._password
+    val _email = _credentials composePrism some composeLens Credentials._email
+    val _password = _credentials composePrism some composeLens Credentials._password
   }
 
   class Backend($: BackendScope[Unit, State]) {
@@ -28,7 +29,7 @@ object LoginPage {
   }
 
   val component = ReactComponentB[Unit]("Login")
-    .initialState(State(None, Credentials("","")))
+    .initialState(State(None, None/*Credentials("","")*/))
     .backend(new Backend(_))
     .render((P, S, B) =>
       <.div(
@@ -40,7 +41,7 @@ object LoginPage {
               ^.cls := "row",
               <.div(
                 ^.cls := "input-field col s12",
-                <.input(^.id := "password", ^.`type` := "password", ^.cls := "validate",  ^.onChange ==> B.onChangePassword, ^.value := S.credentials.password),
+                <.input(^.id := "password", ^.`type` := "password", ^.cls := "validate",  ^.onChange ==> B.onChangePassword, ^.value := S.credentials.map(_.password)),
                 <.label(^.`for` := "password", "Password")
               )
             ),
@@ -48,7 +49,7 @@ object LoginPage {
               ^.cls := "row",
               <.div(
                 ^.cls := "input-field col s12",
-                <.input(^.id := "email", ^.`type` := "email", ^.cls := "validate", ^.onChange ==> B.onChangeEmail, ^.value := S.credentials.email),
+                <.input(^.id := "email", ^.`type` := "email", ^.cls := "validate", ^.onChange ==> B.onChangeEmail, ^.value := S.credentials.map(_.email)),
                 <.label(^.`for` := "email", "Email")
               )
             ),
