@@ -5,6 +5,9 @@ import monocle.macros._
 import monocle.syntax._
 import monocle._
 import monocle.std.option.some
+import scalaz.StateT
+import scalaz.effect.IO
+import ScalazReact._
 
 object LoginPage {
 
@@ -19,11 +22,12 @@ object LoginPage {
   }
 
   class Backend($: BackendScope[Unit, State]) {
+
     def onChangeEmail(e: ReactEventI) =
-      $.modState(State._email.set(e.target.value))
+      $.modStateIO(State._email.set(e.target.value))
 
     def onChangePassword(e: ReactEventI) =
-      $.modState(State._password.set(e.target.value))
+      $.modStateIO(State._password.set(e.target.value))
 
     def handleSubmit(e: ReactEventI) = {
 
