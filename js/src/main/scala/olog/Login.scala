@@ -1,17 +1,26 @@
 package olog
 
 import japgolly.scalajs.react._, vdom.prefix_<^._
+import monocle.macros._
+import monocle.syntax._
+import monocle._
 
 object LoginPage {
 
   case class State(user: Option[UserSession], credentials:Credentials)
+  object State {
+    val lenser = Lenser[State]
+    val _credentials = lenser(_.credentials)
+    val _email = _credentials composeLens Credentials._email
+    val _password = _credentials composeLens Credentials._email
+  }
 
   class Backend($: BackendScope[Unit, State]) {
     def onChangeEmail(e: ReactEventI) =
-      $.modState(st => st.copy(credentials = Credentials._email.set(e.target.value)(st.credentials)))
+      $.modState(State._email.set(e.target.value))
 
     def onChangePassword(e: ReactEventI) =
-      $.modState(st => st.copy(credentials = Credentials._password.set(e.target.value)(st.credentials)))
+      $.modState(State._password.set(e.target.value))
 
     def handleSubmit(e: ReactEventI) = {
 
