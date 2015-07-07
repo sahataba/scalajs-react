@@ -24,9 +24,9 @@ import Addons.ReactCssTransitionGroup
 
 object Contacts {
 
-  import Account.{User, UserSession}
+  import Account.{User, Session}
 
-  case class AppState(user:UserSession, var users:List[User]) {
+  case class AppState(user:Session, var users:List[User]) {
     def createUser(user:User):Future[Unit] = {
       Client[olog.Api].
         create(user).
@@ -41,7 +41,7 @@ object Contacts {
     }
   }
 
-  val store = Var(AppState(UserSession("rudi"), List()))
+  val store = Var(AppState(Session("rudi"), List()))
 
   Client[olog.Api].users(store().user).call().map(_.toList).map{t =>
     store() = store().copy(users = t)

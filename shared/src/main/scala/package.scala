@@ -55,7 +55,7 @@ object Email {
 
 sealed trait Account
 object Account {
-  case class UserSession(id:String) extends Account
+  case class Session(id:String) extends Account
   case class User(
                    firstName: String,
                    lastName:String,
@@ -99,9 +99,10 @@ trait Query[E] {
 
 trait Api /*extends Create[User] with Delete[User]*/{
 
-  def users(user:Account.UserSession): Future[Seq[Account.User]]
+  def users(user:Account.Session): Future[Seq[Account.User]]
   def create(entity:Account.User):Future[Created[Account.User]]
   def delete(id:Id[Account.User]):Future[Deleted[Account.User]]
+  def login(credentials:Account.Credentials):Future[Option[Account.Session]]
 }
 
 case class TodoItem(description:String)

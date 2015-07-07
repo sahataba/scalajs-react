@@ -114,7 +114,7 @@ trait Service extends Api with TodoApi{
       }
     }
 
-  def users(user:Account.UserSession): Future[Seq[Account.User]] = {
+  def users(user:Account.Session): Future[Seq[Account.User]] = {
     TableModel.list2
   }
 
@@ -144,4 +144,9 @@ trait Service extends Api with TodoApi{
     todos = item :: todos
     item
   }
+
+  def login(credentials:Account.Credentials):Future[Option[Account.Session]] = {
+    Future(Some(Account.Session(id = "1")))
+  }
+
 }
