@@ -142,7 +142,7 @@ object Contacts {
           div(
             label("Role: "),
             select(onChange ==> B.onFieldChange(EditField(label = "Role", User._role, parse = RoleConverter.read, write = RoleConverter.write)), value := RoleConverter.write(S.role))(
-              RoleConverter.roles.map(role => option(value:=RoleConverter.write(role))(role.toString))
+              RoleConverter.values.map(role => option(value:=RoleConverter.write(role))(role.toString))
             )
           ),
           button("Add #", P.users.length + 1)

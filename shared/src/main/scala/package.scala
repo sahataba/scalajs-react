@@ -9,23 +9,22 @@ import monocle._
 case class Date(utc:Long) extends AnyVal
 
 trait Converter[E] {
-  val values:Map[String, E]
-  def read: String => Either[String, E] = value => values.get(value) match {
+  val map:Map[String, E]
+  val values = map.values
+  def read: String => Either[String, E] = value => map.get(value) match {
     case Some(entity) => Right(entity)
     case None => Left("missing key")
   }
-  def write: E => String = values map (_.swap)
+  def write: E => String = map map (_.swap)
 
 }
 
 object StatusConverter extends Converter[Status[User]]{
-  val values = Map("Applied" -> Applied, "Approved" -> Approved)
-  val statuses = List(Applied, Approved)
+  val map = Map("Applied" -> Applied, "Approved" -> Approved)
 }
 
 object RoleConverter extends Converter[Role] {
-  val values = Map("admin" -> Admin, "member" -> Member)
-  val roles:List[Role] = List(Admin, Member)
+  val map = Map("admin" -> Admin, "member" -> Member)
 }
 
 sealed trait Role
