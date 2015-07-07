@@ -57,6 +57,15 @@ sealed trait Account
 object Account {
   case class Session(id:Id[User]) extends Account
 
+  case class Info(id:Id[User],role:Role) extends Account
+  object Info {
+    val lenser = Lenser[Info]
+    val _role = lenser(_.role)
+    val _id = lenser(_.id)
+    def from(user:User):Info = Info(id = user.id.get, role = user.role)
+  }
+
+
   case class User(
                    firstName: String,
                    lastName:String,
@@ -100,7 +109,7 @@ trait Query[E] {
 
 trait Api /*extends Create[User] with Delete[User]*/{
 
-  def users(user:Account.Session): Future[Seq[Account.User]]
+  def users(user:Account.Session): Future[Seq[Account.Info]]
   def create(entity:Account.User):Future[Created[Account.User]]
   def delete(id:Id[Account.User]):Future[Deleted[Account.User]]
   def login(credentials:Account.Credentials):Future[Option[Account.Session]]

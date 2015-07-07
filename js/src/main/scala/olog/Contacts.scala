@@ -24,18 +24,18 @@ import Addons.ReactCssTransitionGroup
 
 object Contacts {
 
-  import Account.{User, Session}
+  import Account.{User, Session, Info}
 
-  case class AppState(user:Session, var users:List[User]) {
+  case class AppState(user:Session, var users:List[Info]) {
     def createUser(user:User):Future[Unit] = {
       Client[olog.Api].
         create(user).
         call().
-        map(created => store() = store().copy(users = store().users ++ List(created.value)))
+        map(created => store() = store().copy(users = store().users ++ List(Info.from(created.value))))
     }
-    def removeUser(user:User) = {
+    def removeUser(user:Info) = {
       Client[olog.Api].
-        delete(user.id.get).
+        delete(user.id).
         call().
         map(_ => store() = store().copy(users = users.filter( _ != user)))
     }
@@ -57,12 +57,12 @@ object Contacts {
 
 
   //todo example
-  def handleSubmit2(user:User)(e: ReactEventI) = {
+  def handleSubmit2(user:Info)(e: ReactEventI) = {
     e.preventDefault()
     store().removeUser(user)
   }
 
-  val TodoList = ReactComponentB[List[User]]("TodoList")
+  val TodoList = ReactComponentB[List[Info]]("TodoList")
   .render(P => {
     ReactCssTransitionGroup("olog",  component = "table")(
       thead(
@@ -76,19 +76,15 @@ object Contacts {
   })
   .build
 
-  val todoItemFields:List[(String, User => String)] = List(
-    ("id: ", (user:User) => User._id.get(user).toString),
-    ("name: ", User._name get),
-    ("email: ", (User._email composeLens Email._email) get),
-    ("birthday: ", (user:User) => User._birthday.get(user).toString),
-    ("status: ", (user:User) => User._status.get(user).toString),
-    ("role: ", RoleConverter.write compose (User._role get)))
+  val todoItemFields:List[(String, Info => String)] = List(
+    ("id: ", (user:Info) => Info._id.get(user).toString),
+    ("role: ", RoleConverter.write compose (Info._role get)))
 
-  def tds(user:User) = todoItemFields.map{case (name,lns) => td(lns(user))}
+  def tds(user:Info) = todoItemFields.map{case (name,lns) => td(lns(user))}
 
-  val TodoItem = ReactComponentB[User]("TodoItem")
+  val TodoItem = ReactComponentB[Info]("TodoItem")
   .render(P => {
-    tr(key := P.id.get.toString)(
+    tr(key := P.id.value)(
       td(button(onClick ==> handleSubmit2(P))("X")),
       tds(P))
   })

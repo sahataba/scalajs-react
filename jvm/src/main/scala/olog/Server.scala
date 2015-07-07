@@ -114,8 +114,8 @@ trait Service extends Api with TodoApi{
       }
     }
 
-  def users(user:Account.Session): Future[Seq[Account.User]] = {
-    TableModel.list2
+  def users(user:Account.Session): Future[Seq[Account.Info]] = {
+    TableModel.list2.map(_.map(Account.Info.from))
   }
 
   def create(user:Account.User):Future[Created[Account.User]] = {
