@@ -12,7 +12,7 @@ object LoginPage {
     val lenser = Lenser[State]
     val _credentials = lenser(_.credentials)
     val _email = _credentials composeLens Credentials._email
-    val _password = _credentials composeLens Credentials._email
+    val _password = _credentials composeLens Credentials._password
   }
 
   class Backend($: BackendScope[Unit, State]) {
