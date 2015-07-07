@@ -12,9 +12,9 @@ abstract class TableWithId[A](tag:Tag, name:String) extends Table[A](tag:Tag, na
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 }
 
-class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
+class Users(tag: Tag) extends TableWithId[Account.User](tag, "USERS") {
 
-  implicit val idColumnType = MappedColumnType.base[Id[User], Int](
+  implicit val idColumnType = MappedColumnType.base[Id[Account.User], Int](
    b => b.value,
    id => Id(id)
   )
@@ -29,7 +29,7 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
     RoleConverter.write, (str:String) => RoleConverter.read(str).right.get
   )
 
-  implicit val statusColumnType2 = MappedColumnType.base[olog.Status[User], String](
+  implicit val statusColumnType2 = MappedColumnType.base[olog.Status[Account.User], String](
     StatusConverter.write, (str:String) => StatusConverter.read(str).right.get
   )
 
@@ -42,14 +42,14 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
   def email = column[olog.Email]("EMAIL")
   def birthday = column[Date]("BIRTHDAY")
   def role = column[olog.Role]("ROLE")
-  def status = column[olog.Status[User]]("STATUS")
+  def status = column[olog.Status[Account.User]]("STATUS")
 
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
 
-  def toUser(firstName:String, lastName:String, id:Option[Int], email:Email, birthday:Date, role:Role, status:Status[User]) = {
-    User(
+  def toUser(firstName:String, lastName:String, id:Option[Int], email:Email, birthday:Date, role:Role, status:Status[Account.User]) = {
+    Account.User(
       id = Some(Id(id.get)),
       firstName = firstName,
       lastName = lastName,
@@ -60,7 +60,7 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
     )
   }
 
-  val toRecord: User => Option[(String, String, Option[Int], Email, Date, Role, Status[User])] = user =>
+  val toRecord: Account.User => Option[(String, String, Option[Int], Email, Date, Role, Status[Account.User])] = user =>
     Some((
       user.firstName,
       user.lastName,
@@ -75,7 +75,7 @@ class Users(tag: Tag) extends TableWithId[User](tag, "USERS") {
 }
 
 // The main application
-object TableModel extends CRUD[User, Users]{
+object TableModel extends CRUD[Account.User, Users]{
 
   val profile = slick.driver.H2Driver
 
@@ -86,12 +86,12 @@ object TableModel extends CRUD[User, Users]{
 
   val createActions = DBIO.seq(
     table.ddl.create,
-    table += User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = olog.Date(1l), role = Admin, status = Approved)
+    table += Account.User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = olog.Date(1l), role = Admin, status = Approved)
   )
 
   db.run(createActions)
 
-  def list2:Future[Seq[User]] = db.run(table.result)
+  def list2:Future[Seq[Account.User]] = db.run(table.result)
 
   val byIdActCompiled = Compiled((id:Rep[Int]) => table.filter(_.id === id))
   def byId(id:Int) = db.run(byIdActCompiled(id).result)

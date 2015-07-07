@@ -8,6 +8,8 @@ import monocle.std.option.some
 
 object LoginPage {
 
+  import Account.UserSession
+
   case class State(user: Option[UserSession], credentials:Option[Credentials])
   object State {
     val lenser = Lenser[State]

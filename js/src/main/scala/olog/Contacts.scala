@@ -24,6 +24,8 @@ import Addons.ReactCssTransitionGroup
 
 object Contacts {
 
+  import Account.{User, UserSession}
+
   case class AppState(user:UserSession, var users:List[User]) {
     def createUser(user:User):Future[Unit] = {
       Client[olog.Api].
