@@ -90,8 +90,7 @@ object Account {
   case class Credentials(email:String, password:String)
   object Credentials {
     val lenser = Lenser[Credentials]
-    val _email = lenser(_.email)
-    val _password = lenser(_.password)
+    val (_email, _password) = (lenser(_.email), lenser(_.password))
   }
 }
 
