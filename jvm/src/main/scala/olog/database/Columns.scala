@@ -2,6 +2,7 @@ package olog.database
 
 import slick.driver.H2Driver.api._
 import olog._
+import Account.{Role,Status}
 
 object Columns {
   implicit val idColumnType = MappedColumnType.base[Id[Account.User], Int](
@@ -15,11 +16,11 @@ object Columns {
   { utc => Date(utc) } // map Int to Bool
   )
 
-  implicit val boolColumnType2 = MappedColumnType.base[olog.Role, String](
+  implicit val boolColumnType2 = MappedColumnType.base[Role, String](
     RoleConverter.write, (str:String) => RoleConverter.read(str).right.get
   )
 
-  implicit val statusColumnType2 = MappedColumnType.base[olog.Status[Account.User], String](
+  implicit val statusColumnType2 = MappedColumnType.base[Status, String](
     StatusConverter.write, (str:String) => StatusConverter.read(str).right.get
   )
 

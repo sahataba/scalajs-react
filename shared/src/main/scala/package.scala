@@ -19,21 +19,13 @@ trait Converter[E] {
 
 }
 
-object StatusConverter extends Converter[Status[Account.User]]{
-  val map = Map("Applied" -> Applied, "Approved" -> Approved)
+object StatusConverter extends Converter[Account.Status]{
+  val map = Map("Applied" -> Account.Applied, "Approved" -> Account.Approved)
 }
 
-object RoleConverter extends Converter[Role] {
-  val map = Map("admin" -> Admin, "member" -> Member)
+object RoleConverter extends Converter[Account.Role] {
+  val map = Map("admin" -> Account.Admin, "member" -> Account.Member)
 }
-
-sealed trait Role
-case object Admin extends Role
-case object Member extends Role
-
-sealed trait Status[E]
-case object Applied extends Status[Account.User]
-case object Approved extends Status[Account.User]
 
 case class Id[E](value:Int)
 case class Deleted[E](id:Id[E])
@@ -54,7 +46,9 @@ object Email {
 }
 
 sealed trait Account
-object Account {
+
+package object Account {
+
   case class Session(id:Id[User]) extends Account
 
   case class Info(id:Id[User],role:Role) extends Account
@@ -73,10 +67,10 @@ object Account {
                    email:Email,
                    birthday:Date,
                    role:Role,
-                   status:Status[User]) extends Account
+                   status:Status) extends Account
 
   object User {
-    def dummy():User =  User(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = Applied)
+    def dummy():User =  User(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = Account.Applied)
     val lenser = Lenser[User]
     val _firstName = lenser(_.firstName)
     val _lastName = lenser(_.lastName)
@@ -92,6 +86,15 @@ object Account {
     val lenser = Lenser[Credentials]
     val (_email, _password) = (lenser(_.email), lenser(_.password))
   }
+
+  sealed class Status
+  case object Applied extends Status
+  case object Approved extends Status
+
+  sealed class Role
+  case object Admin extends Role
+  case object Member extends Role
+
 }
 
 trait Create[E] {

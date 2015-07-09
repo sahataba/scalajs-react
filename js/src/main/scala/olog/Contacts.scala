@@ -24,7 +24,7 @@ import Addons.ReactCssTransitionGroup
 
 object Contacts {
 
-  import Account.{User, Session, Info}
+  import Account.{User, Session, Info, Role}
 
   case class AppState(user:Session, var users:List[Info]) {
     def createUser(user:User):Future[Unit] = {

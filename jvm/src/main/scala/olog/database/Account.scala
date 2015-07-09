@@ -4,6 +4,7 @@ import olog._
 import slick.driver.H2Driver.api._
 
 import scala.concurrent._
+import Account.{Status, Role}
 
 class Users(tag: Tag) extends TableWithId[Account.User](tag, "USERS") {
 
@@ -13,14 +14,14 @@ class Users(tag: Tag) extends TableWithId[Account.User](tag, "USERS") {
   def lastName = column[String]("LAST_NAME")
   def email = column[olog.Email]("EMAIL")
   def birthday = column[Date]("BIRTHDAY")
-  def role = column[olog.Role]("ROLE")
-  def status = column[olog.Status[Account.User]]("STATUS")
+  def role = column[Role]("ROLE")
+  def status = column[Status]("STATUS")
 
 
   // the * projection (e.g. select * ...) auto-transforms the tupled
   // column values to / from a User
 
-  def toUser(firstName:String, lastName:String, id:Option[Int], email:Email, birthday:Date, role:Role, status:Status[Account.User]) = {
+  def toUser(firstName:String, lastName:String, id:Option[Int], email:Email, birthday:Date, role:Role, status:Status) = {
     Account.User(
       id = Some(Id(id.get)),
       firstName = firstName,
@@ -32,7 +33,7 @@ class Users(tag: Tag) extends TableWithId[Account.User](tag, "USERS") {
     )
   }
 
-  val toRecord: Account.User => Option[(String, String, Option[Int], Email, Date, Role, Status[Account.User])] = user =>
+  val toRecord: Account.User => Option[(String, String, Option[Int], Email, Date, Role, Status)] = user =>
     Some((
       user.firstName,
       user.lastName,
@@ -58,7 +59,7 @@ object AccountModel extends CRUD[Account.User, Users]{
 
   val createActions = DBIO.seq(
     table.ddl.create,
-    table += Account.User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = olog.Date(1l), role = Admin, status = Approved)
+    table += Account.User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = olog.Date(1l), role = Account.Admin, status = Account.Approved)
   )
 
   db.run(createActions)

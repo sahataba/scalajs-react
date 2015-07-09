@@ -5,7 +5,7 @@ import scala.scalajs.js.annotation.JSExport
 import scalajs.concurrent.JSExecutionContext.Implicits.runNow
 import org.scalajs.dom.{console}
 import org.scalajs.dom.ext._
-import upickle.{Reader, Writer}
+import upickle.default.{Reader, Writer}
 
 
 @JSExport
@@ -18,8 +18,8 @@ object Client extends autowire.Client[String, Reader, Writer]{
     ).map(_.responseText)
   }
 
-  def read[Result: Reader](p: String) = upickle.read[Result](p)
-  def write[Result: Writer](r: Result) = upickle.write(r)
+  def read[Result: Reader](p: String) = upickle.default.read[Result](p)
+  def write[Result: Writer](r: Result) = upickle.default.write(r)
 }
 
 @JSExport
@@ -31,6 +31,6 @@ object TodoClient extends autowire.Client[String, Reader, Writer]{
     ).map(_.responseText)
   }
 
-  def read[Result: Reader](p: String) = upickle.read[Result](p)
-  def write[Result: Writer](r: Result) = upickle.write(r)
+  def read[Result: Reader](p: String) = upickle.default.read[Result](p)
+  def write[Result: Writer](r: Result) = upickle.default.write(r)
 }

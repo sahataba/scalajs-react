@@ -17,10 +17,10 @@ import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-import upickle.{Reader, Writer}
+import upickle.default.{Reader, Writer}
 object AutowireServer extends autowire.Server[String, Reader, Writer]{
-  def read[Result: Reader](p: String) = upickle.read[Result](p)
-  def write[Result: Writer](r: Result) = upickle.write(r)
+  def read[Result: Reader](p: String) = upickle.default.read[Result](p)
+  def write[Result: Writer](r: Result) = upickle.default.write(r)
 }
 
 object AkkaHttpMicroservice extends App with Service {
@@ -91,7 +91,7 @@ trait Service extends Api with TodoApi{
   }
 
   def approve(id:Int):Future[Account.User] = {
-    AccountModel.fetchThenUpdate(Id(id), Account.User._status.set(Approved))
+    AccountModel.fetchThenUpdate(Id(id), Account.User._status.set(Account.Approved))
   }
 
   var todos = List[TodoItem](TodoItem("ines"))

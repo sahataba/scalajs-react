@@ -38,11 +38,12 @@ lazy val p1 =
     version := "0.1-SNAPSHOT",
     scalaVersion := "2.11.6",
     libraryDependencies ++= Seq(
-      "com.lihaoyi" %%% "upickle" % "0.2.8",
+      "com.lihaoyi" %%% "upickle" % "0.3.0",
       "com.lihaoyi" %%% "autowire" % "0.2.5",
       "com.lihaoyi" %%% "scalatags" % "0.5.2",
       "com.lihaoyi" %%% "scalarx" % "0.2.8",
-      "com.lihaoyi" %%% "utest" % "0.3.1"
+      "com.lihaoyi" %%% "utest" % "0.3.1",
+      "com.lihaoyi" %%% "pprint" % "0.3.0"
     )
   ).
   jvmSettings(
