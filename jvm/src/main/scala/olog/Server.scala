@@ -1,7 +1,5 @@
 package olog
 
-import upickle._
-
 import akka.actor.ActorSystem
 import akka.event.{LoggingAdapter, Logging}
 import akka.http.scaladsl.Http
@@ -57,9 +55,11 @@ object Template{
       )
     )
 }
-object AutowireServer extends autowire.Server[String, upickle.Reader, upickle.Writer]{
-  def read[Result: upickle.Reader](p: String) = upickle.read[Result](p)
-  def write[Result: upickle.Writer](r: Result) = upickle.write(r)
+
+import upickle.{Reader, Writer}
+object AutowireServer extends autowire.Server[String, Reader, Writer]{
+  def read[Result: Reader](p: String) = upickle.read[Result](p)
+  def write[Result: Writer](r: Result) = upickle.write(r)
 }
 
 object AkkaHttpMicroservice extends App with Service {
@@ -98,7 +98,7 @@ trait Service extends Api with TodoApi{
         complete {
           ToResponseMarshallable(
           AutowireServer.route[Api](AkkaHttpMicroservice)(
-            autowire.Core.Request(s, upickle.read[Map[String, String]](entity))
+            autowire.Core.Request(s, AutowireServer.read[Map[String, String]](entity))
           ))
         }
       }
@@ -108,7 +108,7 @@ trait Service extends Api with TodoApi{
         complete {
           ToResponseMarshallable(
             AutowireServer.route[TodoApi](AkkaHttpMicroservice)(
-              autowire.Core.Request(s, upickle.read[Map[String, String]](entity))
+              autowire.Core.Request(s, AutowireServer.read[Map[String, String]](entity))
             ))
         }
       }
