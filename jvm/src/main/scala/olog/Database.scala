@@ -1,4 +1,4 @@
-package olog
+package olog.database
 
 import slick.driver.H2Driver.api._
 
@@ -7,6 +7,7 @@ import scala.concurrent._
 import slick.driver.JdbcProfile
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
+import olog._
 
 abstract class TableWithId[A](tag:Tag, name:String) extends Table[A](tag:Tag, name) {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)

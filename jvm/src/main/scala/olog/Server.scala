@@ -72,6 +72,8 @@ trait Service extends Api with TodoApi{
       }
     }
 
+  import database.TableModel
+
   def users(user:Account.Session): Future[Seq[Account.Info]] = {
     TableModel.list2.map(_.map(Account.Info.from))
   }
