@@ -45,9 +45,9 @@ object Email {
   }
 }
 
-sealed trait Account
-
 package object Account {
+
+  sealed trait Account
 
   case class Session(id:Id[User]) extends Account
 

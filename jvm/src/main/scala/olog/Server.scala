@@ -17,6 +17,8 @@ import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
+import pprint.Config.Defaults._
+
 import upickle.default.{Reader, Writer}
 object AutowireServer extends autowire.Server[String, Reader, Writer]{
   def read[Result: Reader](p: String) = upickle.default.read[Result](p)
@@ -97,6 +99,7 @@ trait Service extends Api with TodoApi{
   var todos = List[TodoItem](TodoItem("ines"))
 
   def all():Future[Seq[TodoItem]] = Future {
+    pprint.pprintln(todos, width = 5)
     todos
   }
 
