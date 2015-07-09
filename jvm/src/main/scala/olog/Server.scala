@@ -72,26 +72,26 @@ trait Service extends Api with TodoApi{
       }
     }
 
-  import database.TableModel
+  import database.AccountModel
 
   def users(user:Account.Session): Future[Seq[Account.Info]] = {
-    TableModel.list2.map(_.map(Account.Info.from))
+    AccountModel.list2.map(_.map(Account.Info.from))
   }
 
   def create(user:Account.User):Future[Created[Account.User]] = {
-    TableModel.create(user).map(created => Account.User._id set Some(created.value) apply user).map(e => Created(e))
+    AccountModel.create(user).map(created => Account.User._id set Some(created.value) apply user).map(e => Created(e))
   }
 
   def delete(id:Id[Account.User]):Future[Deleted[Account.User]] = {
-   TableModel.delete(id)
+    AccountModel.delete(id)
   }
 
   def updateLastname(id:Int, lastname:String):Future[Account.User] = {
-    TableModel.fetchThenUpdate(Id(id), Account.User._lastName.set(lastname))
+    AccountModel.fetchThenUpdate(Id(id), Account.User._lastName.set(lastname))
   }
 
   def approve(id:Int):Future[Account.User] = {
-    TableModel.fetchThenUpdate(Id(id), Account.User._status.set(Approved))
+    AccountModel.fetchThenUpdate(Id(id), Account.User._status.set(Approved))
   }
 
   var todos = List[TodoItem](TodoItem("ines"))
