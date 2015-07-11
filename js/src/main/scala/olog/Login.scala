@@ -1,5 +1,8 @@
 package olog
 
+import autowire._
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import japgolly.scalajs.react._, vdom.prefix_<^._
 import monocle.macros._
 import monocle.syntax._
@@ -30,7 +33,9 @@ object LoginPage {
       $.modStateIO(State._password.set(e.target.value))
 
     def handleSubmit(e: ReactEventI) = {
-
+      e.preventDefault()
+      val credentials = Credentials("","")
+      Client[olog.Api].login(credentials).call().map(i => $.modState(s => s.copy(user = i )))
     }
   }
 

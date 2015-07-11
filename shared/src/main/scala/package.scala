@@ -136,9 +136,12 @@ trait Api /*extends Create[User] with Delete[User]*/{
   def login(credentials:Account.Credentials):Future[Option[Account.Session]]
 }
 
-case class TodoItem(description:String)
+object Todo {
+  sealed trait Todo
+  case class Item(description:String) extends Todo
+}
 
 trait TodoApi {
-  def all():Future[Seq[TodoItem]]
-  def create(item:TodoItem):Future[TodoItem]
+  def all():Future[Seq[Todo.Item]]
+  def create(item:Todo.Item):Future[Todo.Item]
 }

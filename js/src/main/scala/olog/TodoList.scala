@@ -1,6 +1,6 @@
 package olog
 
-import olog.TodoItem
+import olog.Todo.Item
 import japgolly.scalajs.react._, vdom.prefix_<^._
 import scala.concurrent.ExecutionContext.Implicits.global
 import autowire._
@@ -10,14 +10,14 @@ object TodoApp {
 
   val data = List("ScalaJS","JavasScript","ReactJS","Html","Css","Software","Browser")
 
-  val TodoList = ReactComponentB[List[TodoItem]]("TodoList")
+  val TodoList = ReactComponentB[List[Todo.Item]]("TodoList")
     .render(props =>
       {
-        def createItem(item: TodoItem) = <.li(item.description)
+        def createItem(item: Todo.Item) = <.li(item.description)
         <.ul(props map createItem)
       }).build
 
-  case class State(items: List[TodoItem], text: String)
+  case class State(items: List[Todo.Item], text: String)
 
   class Backend($: BackendScope[Unit, State]) {
     def onChange(e: ReactEventI) =
@@ -25,7 +25,7 @@ object TodoApp {
 
     def handleSubmit(e: ReactEventI) = {
       e.preventDefault()
-      val item = TodoItem($.get().text)
+      val item = Todo.Item($.get().text)
       TodoClient[olog.TodoApi].create(item).call().map(i => $.modState(s => s.copy(items = i :: s.items )))
     }
 

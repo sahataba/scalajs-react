@@ -96,14 +96,14 @@ trait Service extends Api with TodoApi{
     AccountModel.fetchThenUpdate(Id(id), Account.User._status.set(Account.Approved))
   }
 
-  var todos = List[TodoItem](TodoItem("ines"))
+  var todos = List[Todo.Item](Todo.Item("ines"))
 
-  def all():Future[Seq[TodoItem]] = Future {
+  def all():Future[Seq[Todo.Item]] = Future {
     pprint.pprintln(todos, width = 5)
     todos
   }
 
-  def create(item:TodoItem):Future[TodoItem] = Future {
+  def create(item:Todo.Item):Future[Todo.Item] = Future {
     todos = item :: todos
     item
   }
