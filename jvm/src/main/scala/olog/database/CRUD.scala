@@ -20,12 +20,15 @@ trait CRUD[E,T <: TableWithId[E]] extends CreateDBAction[E, T]{
 
 
   //val del2 = (id:Rep[Int]) => table.filter(_.id === Id(id)).delete
+  val findById = table.findBy(_.id)
 
   def delete(id:Id[E]):Future[Deleted[E]] = {
-    db.run(table.filter(_.id === id.value).delete.map(_ => Deleted(id)))
+    val act =
+      findById(id.value).
+        delete.
+        map(_ => Deleted(id))
+    db.run(act)
   }
-
-  val findById = table.findBy(_.id)
 
   def fetchThenUpdate(id:Id[E], upd: E => E):Future[E] =  {
     val act = for {
@@ -44,5 +47,7 @@ trait CreateDBAction[E,T <: TableWithId[E]] {
   val db:Database
   val table: TableQuery[T]
 
-  def create(entity:E):Future[Created[Id[E]]] = (db.run((table returning table.map(_.id)) += entity)).map(a => Created(Id(a)))
+  def create(entity:E):Future[Created[Id[E]]] =
+    (db.run((table returning table.map(_.id)) += entity)).
+      map(a => Created(Id(a)))
 }
