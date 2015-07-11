@@ -2,9 +2,19 @@ package olog
 
 import scala.concurrent._
 
+import shapeless.tag.@@
 import monocle.macros._
 import monocle.syntax._
 import monocle._
+
+import eu.timepit.refined._
+import eu.timepit.refined.implicits._
+import shapeless.nat._
+import eu.timepit.refined.string._
+import eu.timepit.refined.char._
+import eu.timepit.refined.boolean._
+import eu.timepit.refined.collection._
+
 
 case class Date(utc:Long) extends AnyVal
 
@@ -120,12 +130,10 @@ trait Query[E] {
 }
 
 object Amazon {
-  import eu.timepit.refined.implicits._
-  import shapeless.nat._
-  import shapeless.tag.@@
-  import eu.timepit.refined._
-  import eu.timepit.refined.string._
-  val u1: String @@ Url = "http://example.com"
+  val u1: String @@ LowerCaseUrl = "http://example.com"
+  type LowerCaseUrl = Url And Forall[Not[UpperCase]]
+  type Email2 = MatchesRegex[W.`"^[A-Za-z0-9+_.-]+@(.+)$"`.T]
+  val validEmail:String @@ Email2 = "rudi@gmailcom"
 }
 
 trait Api /*extends Create[User] with Delete[User]*/{
