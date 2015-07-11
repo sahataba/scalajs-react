@@ -17,11 +17,11 @@ object Columns {
   )
 
   implicit val boolColumnType2 = MappedColumnType.base[Role, String](
-    RoleConverter.write, (str:String) => RoleConverter.read(str).right.get
+    Role.write, (str:String) => Role.read(str).right.get
   )
 
   implicit val statusColumnType2 = MappedColumnType.base[Status, String](
-    StatusConverter.write, (str:String) => StatusConverter.read(str).right.get
+    Status.write, (str:String) => Status.read(str).right.get
   )
 
   implicit val emailColumnType2 = MappedColumnType.base[olog.Email, String](
