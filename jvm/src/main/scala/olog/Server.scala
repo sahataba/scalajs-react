@@ -57,21 +57,25 @@ trait Service extends Api with TodoApi{
       getFromResourceDirectory("")
   } ~
     (post & entity(as[String])) { entity =>
-      path("api" / Segments){ s =>
+      path("api" / Segments){ path =>
         complete {
+          val data = AutowireServer.read[Map[String, String]](entity)
+          logger.info(s"Request (url,data) ($path,$data)")
           ToResponseMarshallable(
           AutowireServer.route[Api](AkkaHttpMicroservice)(
-            autowire.Core.Request(s, AutowireServer.read[Map[String, String]](entity))
+            autowire.Core.Request(path, data)
           ))
         }
       }
     } ~
     (post & entity(as[String])) { entity =>
-      path("todoapi" / Segments){ s =>
+      path("todoapi" / Segments){ path =>
         complete {
+          val data = AutowireServer.read[Map[String, String]](entity)
+          logger.info(s"Request (url,data) ($path,$data)")
           ToResponseMarshallable(
             AutowireServer.route[TodoApi](AkkaHttpMicroservice)(
-              autowire.Core.Request(s, AutowireServer.read[Map[String, String]](entity))
+              autowire.Core.Request(path, data)
             ))
         }
       }
