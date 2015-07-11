@@ -88,13 +88,23 @@ package object Account {
   }
 
   sealed class Status
+  object Status extends Enum[Status]{
+    val values:Set[Status] = Set(Applied, Approved)
+  }
   case object Applied extends Status
   case object Approved extends Status
 
   sealed class Role
+  object Role extends Enum[Role]{
+    val values:Set[Role] = Set(Admin, Member)
+  }
   case object Admin extends Role
   case object Member extends Role
 
+}
+
+trait Enum[E] {
+  val values:Set[E]
 }
 
 trait Create[E] {
