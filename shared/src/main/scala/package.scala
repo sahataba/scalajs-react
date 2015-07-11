@@ -30,11 +30,11 @@ trait Converter[E] {
 }
 
 object StatusConverter extends Converter[Account.Status]{
-  val map = Map("Applied" -> Account.Applied, "Approved" -> Account.Approved)
+  val map = Account.Status.map
 }
 
 object RoleConverter extends Converter[Account.Role] {
-  val map = Map("admin" -> Account.Admin, "member" -> Account.Member)
+  val map = Account.Role.map
 }
 
 case class Id[E](value:Int)
@@ -98,23 +98,23 @@ package object Account {
   }
 
   sealed class Status
-  object Status extends Enum[Status]{
-    val values:Set[Status] = Set(Applied, Approved)
+  object Status extends Enum[Status, String]{
+    val map:Map[String,Status] = Map("applied" -> Applied, "approved" -> Approved)
   }
   case object Applied extends Status
   case object Approved extends Status
 
   sealed class Role
-  object Role extends Enum[Role]{
-    val values:Set[Role] = Set(Admin, Member)
+  object Role extends Enum[Role, String]{
+    val map:Map[String, Role] = Map("admin" -> Admin, "member" -> Member)
   }
   case object Admin extends Role
   case object Member extends Role
 
 }
 
-trait Enum[E] {
-  val values:Set[E]
+trait Enum[E,D] {
+  val map:Map[D,E]
 }
 
 trait Create[E] {
