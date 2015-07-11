@@ -11,10 +11,12 @@ import upickle.default.{Reader, Writer}
 @JSExport
 object Client extends autowire.Client[String, Reader, Writer]{
   override def doCall(req: Request): Future[String] = {
-    console.log("miha")
+    val url = "/api/" + req.path.mkString("/")
+    val data = write(req.args)
+    console.log(s"Request(url,data) ($url,$data)")
     Ajax.post(
-      url = "/api/" + req.path.mkString("/"),
-      data = write(req.args)
+      url = url,
+      data = data
     ).map(_.responseText)
   }
 
