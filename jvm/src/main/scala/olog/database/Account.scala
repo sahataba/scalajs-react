@@ -59,7 +59,13 @@ object AccountModel extends CRUD[Account.User, Users]{
 
   val createActions = DBIO.seq(
     table.ddl.create,
-    table += Account.User(firstName = "aurelius", lastName = "livingston", email = Email("great road"), birthday = olog.Date(1l), role = Account.Admin, status = Account.Approved)
+    table += Account.User(
+      firstName = "aurelius",
+      lastName = "livingston",
+      email = Email("great road"),
+      birthday = olog.Date(1l),
+      role = Account.Admin,
+      status = Account.Approved)
   )
 
   db.run(createActions)

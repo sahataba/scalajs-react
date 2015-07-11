@@ -33,7 +33,10 @@ object AkkaHttpMicroservice extends App with Service {
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
 
-  Http().bindAndHandle(routes, interface = config.getString("http.interface"), port = config.getInt("http.port"))//.startHandlingWith(routes)
+  Http().bindAndHandle(
+    routes,
+    interface = config.getString("http.interface"),
+    port = config.getInt("http.port"))
 }
 
 trait Service extends Api with TodoApi{
@@ -81,19 +84,28 @@ trait Service extends Api with TodoApi{
   }
 
   def create(user:Account.User):Future[Created[Account.User]] = {
-    AccountModel.create(user).map(created => Account.User._id set Some(created.value) apply user).map(e => Created(e))
+    AccountModel.
+      create(user).
+      map(created => Account.User._id set Some(created.value) apply user).
+      map(Created(_))
   }
 
   def delete(id:Id[Account.User]):Future[Deleted[Account.User]] = {
     AccountModel.delete(id)
   }
 
-  def updateLastname(id:Int, lastname:String):Future[Account.User] = {
-    AccountModel.fetchThenUpdate(Id(id), Account.User._lastName.set(lastname))
+  def updateLastname(id:Id[Account.User], lastname:String):Future[Account.User] = {
+    AccountModel.
+      fetchThenUpdate(
+        id = id,
+        upd = Account.User._lastName.set(lastname))
   }
 
-  def approve(id:Int):Future[Account.User] = {
-    AccountModel.fetchThenUpdate(Id(id), Account.User._status.set(Account.Approved))
+  def approve(id:Id[Account.User]):Future[Account.User] = {
+    AccountModel.
+      fetchThenUpdate(
+        id,
+        Account.User._status.set(Account.Approved))
   }
 
   var todos = List[Todo.Item](Todo.Item("ines"))
