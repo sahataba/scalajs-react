@@ -119,6 +119,15 @@ trait Query[E] {
   def all:Future[Seq[E]]
 }
 
+object Amazon {
+  import eu.timepit.refined.implicits._
+  import shapeless.nat._
+  import shapeless.tag.@@
+  import eu.timepit.refined._
+  import eu.timepit.refined.string._
+  val u1: String @@ Url = "http://example.com"
+}
+
 trait Api /*extends Create[User] with Delete[User]*/{
 
   def users(user:Account.Session): Future[Seq[Account.Info]]

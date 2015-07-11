@@ -43,7 +43,8 @@ lazy val p1 =
       "com.lihaoyi" %%% "scalatags" % "0.5.2",
       "com.lihaoyi" %%% "scalarx" % "0.2.8",
       "com.lihaoyi" %%% "utest" % "0.3.1",
-      "com.lihaoyi" %%% "pprint" % "0.3.0"
+      "com.lihaoyi" %%% "pprint" % "0.3.0",
+      "eu.timepit" %%% "refined" % "0.1.2"
     )
   ).
   jvmSettings(
