@@ -66,7 +66,7 @@ lazy val p1 =
         "org.scala-js" %%% "scalajs-dom" % "0.8.0",
         "com.github.japgolly.scalajs-react" %%% "core" % reactV,
         "com.github.japgolly.scalajs-react" %%% "extra" % reactV,
-        "com.chandu0101.scalajs-react-components" %%% "core" % "0.1.0",
+        "com.github.chandu0101.scalajs-react-components" %%% "core" % "0.1.0",
         "com.github.japgolly.fork.monocle" %%% "monocle-core" % monocleV,
         "com.github.japgolly.fork.monocle" %%% "monocle-macro" % monocleV
       )
