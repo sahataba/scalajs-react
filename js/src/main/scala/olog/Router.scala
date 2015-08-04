@@ -17,15 +17,21 @@ object Pages {
   case object About extends Page
   case object Login extends Page
 
+  var isUserLoggedIn: Boolean = false
 
   val routerConfig = RouterConfigDsl[Page].buildConfig { dsl =>
     import dsl._
 
+    val privatePages = (emptyRule
+      | staticRoute("#doc", Doco) ~> render(TodoApp.TodoApp())
+      )
+      .addCondition(isUserLoggedIn)(page => redirectToPage(Login)(Redirect.Push))
+
     (trimSlashes
       | staticRoute(root,     Home) ~> render(<.div(Style.content)("hh"))
-      | staticRoute("#doc",   Doco) ~> render(<.div(TodoApp.TodoApp()))
       | staticRoute("#about", About) ~> render(<.div(AboutPage()))
       | staticRoute("#login", Login) ~> render(<.div(LoginPage()))
+      | privatePages
       )
       .notFound(redirectToPage(Home)(Redirect.Replace))
       .renderWith(layout)
@@ -48,7 +54,7 @@ object Pages {
         ^.cls := "right",
         nav("Home",          Home),
         nav("About",         About),
-        nav("Documentation", Doco),
+        isUserLoggedIn ?= nav("Documentation", Doco),
         nav("Login",         Login))))
   }
     .configure(Reusability.shouldComponentUpdate)
