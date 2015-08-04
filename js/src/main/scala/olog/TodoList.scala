@@ -1,6 +1,5 @@
 package olog
 
-import olog.Todo.Item
 import japgolly.scalajs.react._, vdom.prefix_<^._
 import scala.concurrent.ExecutionContext.Implicits.global
 import autowire._

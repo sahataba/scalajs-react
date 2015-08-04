@@ -1,10 +1,7 @@
 package olog
 
-import olog.TodoApp
 import org.scalajs.dom
-import scala.scalajs.js.JSApp
-import scala.scalajs.js.annotation.JSExport
-import japgolly.scalajs.react._, vdom.prefix_<^._, ScalazReact._
+import japgolly.scalajs.react._, vdom.prefix_<^._
 import japgolly.scalajs.react.extra._
 import japgolly.scalajs.react.extra.router2._
 import scalacss.ScalaCssReact._
