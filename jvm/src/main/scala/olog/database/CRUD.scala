@@ -5,7 +5,6 @@ import slick.driver.H2Driver.api._
 import slick.lifted.{ProvenShape, ForeignKeyQuery}
 import scala.concurrent._
 import slick.driver.JdbcProfile
-import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import olog._
 

@@ -58,7 +58,7 @@ object AccountModel extends CRUD[Account.User, Users]{
   lazy val db = Database.forURL("jdbc:h2:mem:hello;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
 
   val createActions = DBIO.seq(
-    table.ddl.create,
+    table.schema.create,
     table += Account.User(
       firstName = "aurelius",
       lastName = "livingston",

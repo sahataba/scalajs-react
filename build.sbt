@@ -4,7 +4,7 @@ enablePlugins(JavaServerAppPackaging)
 
 name := "Olog"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 resolvers += Resolver.mavenLocal
 
@@ -23,6 +23,17 @@ val akkahttpdependencies = {
   )
 }
 
+val scOptions = Seq(
+  "-unchecked",
+  "-deprecation",
+  "-encoding",
+  "utf8",
+  "-Xlint",
+  "-Xfatal-warnings",
+  //"-Ywarn-unused",
+  "-Ywarn-unused-import",
+  "-feature")
+
 lazy val root = project.
   aggregate(fooJS, fooJVM).
   settings(
@@ -36,7 +47,7 @@ lazy val p1 =
   settings(
     name := "olog",
     version := "0.1-SNAPSHOT",
-    scalaVersion := "2.11.6",
+    scalaVersion := "2.11.7",
     libraryDependencies ++= Seq(
       "com.lihaoyi" %%% "upickle" % "0.3.0",
       "com.lihaoyi" %%% "autowire" % "0.2.5",
@@ -48,6 +59,7 @@ lazy val p1 =
     )
   ).
   jvmSettings(
+    scalacOptions ++= scOptions,
     libraryDependencies ++= akkahttpdependencies ++ Seq(
       "org.webjars" % "bootstrap" % "3.2.0",
       "com.typesafe.slick" %% "slick" % "3.0.0",
@@ -59,7 +71,8 @@ lazy val p1 =
     )
   ).
   jsSettings(
-    libraryDependencies ++= {
+      scalacOptions ++= scOptions,
+      libraryDependencies ++= {
       val monocleV = "1.1.1"
       val reactV = "0.9.1"
       Seq(

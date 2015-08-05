@@ -1,12 +1,11 @@
 package olog
 
+import scala.language.higherKinds
 import autowire._
 import japgolly.scalajs.react._
 import monocle.macros.Lenser
 import olog.Account.{Credentials, Session}
 import monocle.macros._
-import monocle.syntax._
-import monocle._
 import monocle.std.option.some
 import org.scalajs.dom.{console}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,7 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object State {
   case class UserS(user: Option[Session], credentials:Option[Credentials])
   object UserS {
-    val lenser = Lenser[UserS]
+    val lenser = GenLens[UserS]
     val _credentials = lenser(_.credentials)
     val _email = _credentials composePrism some composeLens Credentials._email
     val _password = _credentials composePrism some composeLens Credentials._password

@@ -4,10 +4,11 @@ import scalacss.Defaults._
 import scalacss.ScalaCssReact._
 import scalacss.mutable.GlobalRegistry
 import scalacss.mutable.StyleSheet.Inline
+import scala.language.postfixOps
 
 object AppCSS {
 
-  def load = {
+  def load() {
     GlobalRegistry.register(Style)
     GlobalRegistry.onRegistration(_.addToDocument())
   }

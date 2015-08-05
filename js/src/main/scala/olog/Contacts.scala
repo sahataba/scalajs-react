@@ -1,13 +1,8 @@
 package olog
 
-import org.scalajs.dom
+import org.scalajs.dom.{console, Node}
 
-import scala.scalajs.js
-import scala.scalajs.js.annotation.JSExport
-import org.scalajs.dom.{console, document, Node}
-
-import scala.concurrent.{Future,Await}
-import scala.concurrent.duration._
+import scala.concurrent.{Future}
 import scalajs.concurrent.JSExecutionContext.Implicits.runNow
 
 import japgolly.scalajs.react.vdom.all._
@@ -17,10 +12,10 @@ import autowire._
 
 import rx._
 
-import monocle.syntax._
 import monocle._
 
 import Addons.ReactCssTransitionGroup
+import scala.language.postfixOps
 
 object Contacts {
 
@@ -51,7 +46,7 @@ object Contacts {
     Obs(store){
       console.log("render")
       //dispatcher.state
-      React.renderComponent(TodoApp(store()), mountNode)
+      React.render(TodoApp(store()), mountNode)
     }
   }
 

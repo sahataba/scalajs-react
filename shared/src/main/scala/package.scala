@@ -1,15 +1,14 @@
 package olog
 
+import scala.language.higherKinds
 import scala.concurrent._
 
 import shapeless.tag.@@
 import monocle.macros._
-import monocle.syntax._
 import monocle._
 
 import eu.timepit.refined._
 import eu.timepit.refined.implicits._
-import shapeless.nat._
 import eu.timepit.refined.string._
 import eu.timepit.refined.char._
 import eu.timepit.refined.boolean._
@@ -36,7 +35,7 @@ case class Created[E](value:E)
 case class Email(email:String) extends AnyVal
 
 object Email {
-  val lenser = Lenser[Email]
+  val lenser = GenLens[Email]
   val _email = lenser(_.email)
 
   def parse(value:String):Either[String, Email] = {
@@ -47,7 +46,7 @@ object Email {
   }
 }
 
-package object Account {
+package Account {
 
   sealed trait Account
 
@@ -55,7 +54,7 @@ package object Account {
 
   case class Info(id:Id[User],role:Role) extends Account
   object Info {
-    val lenser = Lenser[Info]
+    val lenser = GenLens[Info]
     val _role = lenser(_.role)
     val _id = lenser(_.id)
     def from(user:User):Info = Info(id = user.id.get, role = user.role)
@@ -73,7 +72,7 @@ package object Account {
 
   object User {
     def dummy():User =  User(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = Account.Applied)
-    val lenser = Lenser[User]
+    val lenser = GenLens[User]
     val _firstName = lenser(_.firstName)
     val _lastName = lenser(_.lastName)
     val _name:Getter[User,String] = Getter((user:User) => _firstName.get(user) + _lastName.get(user))
@@ -85,7 +84,7 @@ package object Account {
   }
   case class Credentials(email:String, password:String)
   object Credentials {
-    val lenser = Lenser[Credentials]
+    val lenser = GenLens[Credentials]
     val (_email, _password) = (lenser(_.email), lenser(_.password))
   }
 
