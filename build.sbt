@@ -54,8 +54,8 @@ lazy val p1 =
       "org.slf4j" % "slf4j-nop" % "1.6.4",
       "com.h2database" % "h2" % "1.3.170",
       "org.flywaydb" % "flyway-core" % "3.0",
-      "com.github.julien-truffaut"  %%  "monocle-core" % "1.0.1",
-      "com.github.julien-truffaut"  %%  "monocle-macro" % "1.0.1"
+      "com.github.julien-truffaut"  %%  "monocle-core" % "1.1.1",
+      "com.github.julien-truffaut"  %%  "monocle-macro" % "1.1.1"
     )
   ).
   jsSettings(
