@@ -5,6 +5,8 @@ import japgolly.scalajs.react._, vdom.prefix_<^._
 import japgolly.scalajs.react.extra._
 import japgolly.scalajs.react.extra.router2._
 import scalacss.ScalaCssReact._
+import cats.std.all._, cats.syntax.eq._
+
 
 object Pages {
 
@@ -58,7 +60,7 @@ object Pages {
     .build
 
   val baseUrl =
-    if (dom.window.location.hostname == "localhost")
+    if (dom.window.location.hostname === "localhost")
       BaseUrl.fromWindowOrigin_/
     else
       BaseUrl.fromWindowOrigin / "scalajs-react/"
