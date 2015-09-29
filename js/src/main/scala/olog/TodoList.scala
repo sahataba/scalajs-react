@@ -3,7 +3,6 @@ package olog
 import japgolly.scalajs.react._, vdom.prefix_<^._
 import scala.concurrent.ExecutionContext.Implicits.global
 import autowire._
-import chandu0101.scalajs.react.components.listviews._
 
 object TodoApp {
 
@@ -43,7 +42,7 @@ object TodoApp {
     .render((_, S, B) =>
       <.div(
         <.h3("TODO"),
-          ReactListView(items = data, showSearchBox = true /*,onItemSelect = B.onItemSelect*/),
+          //ReactListView(items = data, showSearchBox = true /*,onItemSelect = B.onItemSelect*/),
           TodoList(S.items),
         <.form(^.onSubmit ==> B.handleSubmit,
           <.input(^.onChange ==> B.onChange, ^.value := S.text),

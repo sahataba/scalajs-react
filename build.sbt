@@ -93,14 +93,15 @@ lazy val p1 =
       scalacOptions ++= scOptions,
       libraryDependencies ++= {
       val monocleV = "1.1.1"
-      val reactV = "0.9.1"
+      val reactV = "0.9.2"
       Seq(
-        "org.scala-js" %%% "scalajs-dom" % "0.8.0",
+        "org.scala-js" %%% "scalajs-dom" % "0.8.1",
         "com.github.japgolly.scalajs-react" %%% "core" % reactV,
         "com.github.japgolly.scalajs-react" %%% "extra" % reactV,
-        "com.github.chandu0101.scalajs-react-components" %%% "core" % "0.1.0",
         "com.github.japgolly.fork.monocle" %%% "monocle-core" % monocleV,
-        "com.github.japgolly.fork.monocle" %%% "monocle-macro" % monocleV
+        "com.github.japgolly.fork.monocle" %%% "monocle-macro" % monocleV,
+        "com.github.japgolly.scalacss" %%% "core" % "0.3.0",
+        "com.github.japgolly.scalacss" %%% "ext-react" % "0.3.0"
       )
     },
     bootSnippet := "ReactExample().main();"
