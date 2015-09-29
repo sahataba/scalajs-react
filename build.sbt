@@ -41,6 +41,23 @@ lazy val root = project.
     publishLocal := {}
   )
 
+val warningWarts = List(
+  Wart.Any,
+  Wart.Throw,
+  Wart.Nothing,
+  Wart.EitherProjectionPartial,
+  Wart.DefaultArguments,
+  Wart.AsInstanceOf,
+  Wart.Product,
+  Wart.ExplicitImplicitTypes,
+  Wart.NonUnitStatements,
+  Wart.Serializable,
+  Wart.Var,
+  Wart.FinalCaseClass,
+  Wart.IsInstanceOf,
+  Wart.OptionPartial
+)
+
 lazy val p1 =
   crossProject.
   in(file(".")).
@@ -69,7 +86,8 @@ lazy val p1 =
       "org.flywaydb" % "flyway-core" % "3.0",
       "com.github.julien-truffaut"  %%  "monocle-core" % "1.1.1",
       "com.github.julien-truffaut"  %%  "monocle-macro" % "1.1.1"
-    )
+    ),
+    wartremoverErrors ++= Warts.allBut(warningWarts:_*)
   ).
   jsSettings(
       scalacOptions ++= scOptions,
