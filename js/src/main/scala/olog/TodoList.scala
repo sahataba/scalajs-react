@@ -16,7 +16,7 @@ object TodoApp {
         <.ul(props map createItem)
       }).build
 
-  case class State(items: List[Todo.Item], text: String)
+  final case class State(items: List[Todo.Item], text: String)
 
   class Backend($: BackendScope[Unit, State]) {
     def onChange(e: ReactEventI) =

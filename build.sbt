@@ -53,7 +53,7 @@ val warningWarts = List(
   Wart.NonUnitStatements,
   Wart.Serializable,
   Wart.Var,
-  Wart.FinalCaseClass,
+  //Wart.FinalCaseClass,
   Wart.IsInstanceOf,
   Wart.OptionPartial
 )

@@ -15,7 +15,7 @@ import eu.timepit.refined.boolean._
 import eu.timepit.refined.collection._
 
 
-case class Date(utc:Long) extends AnyVal
+final case class Date(utc:Long) extends AnyVal
 
 trait Converter[E] {
   val map:Map[String, E]
@@ -28,11 +28,11 @@ trait Converter[E] {
 
 }
 
-case class Id[E](value:Int)
-case class Deleted[E](id:Id[E])
-case class Created[E](value:E)
+final case class Id[E](value:Int)
+final case class Deleted[E](id:Id[E])
+final case class Created[E](value:E)
 
-case class Email(email:String) extends AnyVal
+final case class Email(email:String) extends AnyVal
 
 object Email {
   val lenser = GenLens[Email]
@@ -50,9 +50,9 @@ package Account {
 
   sealed trait Account
 
-  case class Session(id:Id[User]) extends Account
+  final case class Session(id:Id[User]) extends Account
 
-  case class Info(id:Id[User],role:Role) extends Account
+  final case class Info(id:Id[User],role:Role) extends Account
   object Info {
     val lenser = GenLens[Info]
     val _role = lenser(_.role)
@@ -61,7 +61,7 @@ package Account {
   }
 
 
-  case class User(
+  final case class User(
                    firstName: String,
                    lastName:String,
                    id: Option[Id[User]] = None,
@@ -82,7 +82,7 @@ package Account {
     val _id = lenser(_.id)
     val _status = lenser(_.status)
   }
-  case class Credentials(email:String, password:String)
+  final case class Credentials(email:String, password:String)
   object Credentials {
     val lenser = GenLens[Credentials]
     val (_email, _password) = (lenser(_.email), lenser(_.password))
@@ -137,7 +137,7 @@ trait Api /*extends Create[User] with Delete[User]*/{
 
 object Todo {
   sealed trait Todo
-  case class Item(description:String) extends Todo
+  final case class Item(description:String) extends Todo
 }
 
 trait TodoApi {

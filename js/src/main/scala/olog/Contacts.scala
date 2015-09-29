@@ -21,7 +21,7 @@ object Contacts {
 
   import Account.{User, Session, Info, Role}
 
-  case class AppState(user:Session, var users:List[Info]) {
+  final case class AppState(user:Session, var users:List[Info]) {
     def createUser(user:User):Future[Unit] = {
       Client[olog.Api].
         create(user).
@@ -85,7 +85,7 @@ object Contacts {
   })
   .build
 
-  //case class State(usr:User)
+  //final case class State(usr:User)
 
   class Backend(t: BackendScope[AppState, User]) {
     def onFieldChange[F](f : EditField[User, F])(e: ReactEventI) = {
@@ -104,7 +104,7 @@ object Contacts {
     }
   }
 
-  case class EditField[E, F](
+  final case class EditField[E, F](
                            label:String,
                            lens:Lens[E, F],
                            parse: String => Either[String, F],

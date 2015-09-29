@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 
 object State {
-  case class UserS(user: Option[Session], credentials:Option[Credentials])
+  final case class UserS(user: Option[Session], credentials:Option[Credentials])
   object UserS {
     val lenser = GenLens[UserS]
     val _credentials = lenser(_.credentials)
