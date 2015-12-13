@@ -50,7 +50,7 @@ object Account {
 
   sealed trait Account
 
-  type Id = DbId[User]
+  type Id = DbId[Record]
 
   final case class Session(id:Id) extends Account
 
@@ -59,11 +59,11 @@ object Account {
     val lenser = GenLens[Info]
     val _role = lenser(_.role)
     val _id = lenser(_.id)
-    def from(user:User):Info = Info(id = user.id.get, role = user.role)
+    def from(user:Record):Info = Info(id = user.id.get, role = user.role)
   }
 
 
-  final case class User(
+  final case class Record(
                    firstName: String,
                    lastName:String,
                    id: Option[Id] = None,
@@ -72,12 +72,12 @@ object Account {
                    role:Role,
                    status:Status) extends Account
 
-  object User {
-    def dummy():User =  User(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = Account.Applied)
-    val lenser = GenLens[User]
+  object Record {
+    def dummy():Record =  Record(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = Account.Applied)
+    val lenser = GenLens[Record]
     val _firstName = lenser(_.firstName)
     val _lastName = lenser(_.lastName)
-    val _name:Getter[User,String] = Getter((user:User) => _firstName.get(user) + _lastName.get(user))
+    val _name:Getter[Record,String] = Getter((user:Record) => _firstName.get(user) + _lastName.get(user))
     val _email = lenser(_.email)
     val _birthday = lenser(_.birthday)
     val _role = lenser(_.role)
@@ -132,8 +132,8 @@ object Amazon {
 trait Api /*extends Create[User] with Delete[User]*/{
 
   def users(user:Account.Session): Future[Seq[Account.Info]]
-  def create(entity:Account.User):Future[Created[Account.User]]
-  def delete(id:Account.Id):Future[Deleted[Account.User]]
+  def create(entity:Account.Record):Future[Created[Account.Record]]
+  def delete(id:Account.Id):Future[Deleted[Account.Record]]
   def login(credentials:Account.Credentials):Future[Option[Account.Session]]
 }
 

@@ -19,10 +19,10 @@ import scala.language.postfixOps
 
 object Contacts {
 
-  import Account.{User, Session, Info, Role}
+  import Account.{Record, Session, Info, Role}
 
   final case class AppState(user:Session, var users:List[Info]) {
-    def createUser(user:User):Future[Unit] = {
+    def createUser(user:Record):Future[Unit] = {
       Client[olog.Api].
         create(user).
         call().
@@ -87,8 +87,8 @@ object Contacts {
 
   //final case class State(usr:User)
 
-  class Backend(t: BackendScope[AppState, User]) {
-    def onFieldChange[F](f : EditField[User, F])(e: ReactEventI) = {
+  class Backend(t: BackendScope[AppState, Record]) {
+    def onFieldChange[F](f : EditField[Record, F])(e: ReactEventI) = {
 
       f.parse(e.target.value) match {
         case Right(en) => t.modState(f.lens set en)
@@ -100,7 +100,7 @@ object Contacts {
       e.preventDefault()
       console.log("KK" + t.state)
       //a() = a().copy(users = a().users ++ List(User(t.state.text)))
-      store().createUser(t.state).foreach(_ => t.modState(s => User.dummy()))
+      store().createUser(t.state).foreach(_ => t.modState(s => Record.dummy()))
     }
   }
 
@@ -117,16 +117,16 @@ object Contacts {
   def ddParse = (v:String) => Right(v)
   def id[E](x:E) = x
 
-  val rolefield = EditField[User,Role](label = "Role: ", lens = User._role, parse = Role.read, write = Role.write)
+  val rolefield = EditField[Record,Role](label = "Role: ", lens = Record._role, parse = Role.read, write = Role.write)
   def inputs = List(
-    EditField[User,String](label = "First Name: ", lens = User._firstName, parse = ddParse, write = id),
-    EditField[User,String](label = "Last Name: ", lens = User._lastName, parse = ddParse, write = id),
-    EditField[User,Email](label = "Email: ", lens = User._email, Email.parse _, write = Email._email get),
+    EditField[Record,String](label = "First Name: ", lens = Record._firstName, parse = ddParse, write = id),
+    EditField[Record,String](label = "Last Name: ", lens = Record._lastName, parse = ddParse, write = id),
+    EditField[Record,Email](label = "Email: ", lens = Record._email, Email.parse _, write = Email._email get),
     rolefield
     )
 
   val TodoApp = ReactComponentB[AppState]("TodoApp")
-    .initialState(User.dummy())
+    .initialState(Record.dummy())
     .backend(new Backend(_))
     .render((P, S, B) =>
       div(

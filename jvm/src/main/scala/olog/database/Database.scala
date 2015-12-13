@@ -77,20 +77,20 @@ object db {
    */
 
 
-  def fetchThenUpdate(id:Account.Id, upd: Account.User => Account.User):Future[Account.User] =  ???
+  def fetchThenUpdate(id:Account.Id, upd: Account.Record => Account.Record):Future[Account.Record] =  ???
 
-  def create(entity:Account.User):Future[Created[Account.Id]] = ???
+  def create(entity:Account.Record):Future[Created[Account.Id]] = ???
 
-  def delete(id:Account.Id):Future[Deleted[Account.User]] = ???
+  def delete(id:Account.Id):Future[Deleted[Account.Record]] = ???
 
-  def list:Future[List[Account.User]] =
+  def list:Future[List[Account.Record]] =
     sql"select first_name, last_name, id, email, birthday, role, status  from users"
-      .query[Account.User] // Query0[String]
+      .query[Account.Record] // Query0[String]
       .list          // ConnectionIO[List[String]]
       .transact(xa)  // Task[List[String]]
       .runFuture
 
-  def byId(id:Int):Future[Option[Account.User]] = ???
+  def byId(id:Int):Future[Option[Account.Record]] = ???
 
   def all:Future[List[Todo.Item]] =
     sql"select description  from todos"
