@@ -83,32 +83,32 @@ trait Service extends Api with TodoApi{
       }
     }
 
-  import database.AccountModel
+  import database.db
 
   def users(user:Account.Session): Future[List[Account.Info]] = {
-    AccountModel.list.map(_.map(Account.Info.from))
+    db.list.map(_.map(Account.Info.from))
   }
 
   def create(user:Account.User):Future[Created[Account.User]] = {
-    AccountModel.
+    db.
       create(user).
       map(created => Account.User._id set Some(created.value) apply user).
       map(Created(_))
   }
 
   def delete(id:Account.Id):Future[Deleted[Account.User]] = {
-    AccountModel.delete(id)
+    db.delete(id)
   }
 
   def updateLastname(id:Account.Id, lastname:String):Future[Account.User] = {
-    AccountModel.
+    db.
       fetchThenUpdate(
         id = id,
         upd = Account.User._lastName.set(lastname))
   }
 
   def approve(id:Account.Id):Future[Account.User] = {
-    AccountModel.
+    db.
       fetchThenUpdate(
         id,
         Account.User._status.set(Account.Approved))
@@ -118,7 +118,7 @@ trait Service extends Api with TodoApi{
 
   def all():Future[Seq[Todo.Item]] =
     for {
-      accounts <- AccountModel.all
+      accounts <- db.all
     } yield {
       pprint.pprintln(accounts, width = 5)
       accounts
@@ -126,7 +126,7 @@ trait Service extends Api with TodoApi{
 
   def create(item:Todo.Item):Future[Todo.Item] =
     for {
-      i <- AccountModel.create(item.description)
+      i <- db.create(item.description)
     } yield item
 
   def login(credentials:Account.Credentials):Future[Option[Account.Session]] = {

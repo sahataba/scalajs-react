@@ -5,7 +5,7 @@ import scala.concurrent.{Promise, Future}
 import scalaz.concurrent.{Task}
 import doobie.imports._
 
-object AccountModel {
+object db {
 
   implicit final class TaskExtensionOps[A](x: => Task[A]) {
     import scalaz.{ \/-, -\/ }
