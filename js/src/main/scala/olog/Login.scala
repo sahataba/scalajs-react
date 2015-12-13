@@ -4,7 +4,7 @@ import japgolly.scalajs.react._, vdom.prefix_<^._
 
 object LoginPage {
 
-  import Account.{Credentials}
+  import User.{Credentials}
 
   val component = ReactComponentB[Unit]("Login")
     .initialState(State.UserS(None, Some(Credentials("",""))))

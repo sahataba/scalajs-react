@@ -85,43 +85,43 @@ trait Service extends Api with TodoApi{
 
   import database.db
 
-  def users(user:Account.Session): Future[List[Account.Info]] = {
-    db.list.map(_.map(Account.Info.from))
+  def users(user:User.Session): Future[List[User.Info]] = {
+    db.list.map(_.map(User.Info.from))
   }
 
-  def create(user:Account.Record):Future[Created[Account.Record]] = {
+  def create(user:User.Record):Future[Created[User.Record]] = {
     db.
       create(user).
-      map(created => Account.Record._id set Some(created.value) apply user).
+      map(created => User.Record._id set Some(created.value) apply user).
       map(Created(_))
   }
 
-  def delete(id:Account.Id):Future[Deleted[Account.Record]] = {
+  def delete(id:User.Id):Future[Deleted[User.Record]] = {
     db.delete(id)
   }
 
-  def updateLastname(id:Account.Id, lastname:String):Future[Account.Record] = {
+  def updateLastname(id:User.Id, lastname:String):Future[User.Record] = {
     db.
       fetchThenUpdate(
         id = id,
-        upd = Account.Record._lastName.set(lastname))
+        upd = User.Record._lastName.set(lastname))
   }
 
-  def approve(id:Account.Id):Future[Account.Record] = {
+  def approve(id:User.Id):Future[User.Record] = {
     db.
       fetchThenUpdate(
         id,
-        Account.Record._status.set(Account.Approved))
+        User.Record._status.set(User.Approved))
   }
 
   var todos = List[Todo.Item](Todo.Item("ines"))
 
   def all():Future[Seq[Todo.Item]] =
     for {
-      accounts <- db.all
+      todos <- db.all
     } yield {
-      pprint.pprintln(accounts, width = 5)
-      accounts
+      pprint.pprintln(todos, width = 5)
+      todos
     }
 
   def create(item:Todo.Item):Future[Todo.Item] =
@@ -129,8 +129,8 @@ trait Service extends Api with TodoApi{
       i <- db.create(item.description)
     } yield item
 
-  def login(credentials:Account.Credentials):Future[Option[Account.Session]] = {
-    Future(Some(Account.Session(id = new Account.Id(1))))
+  def login(credentials:User.Credentials):Future[Option[User.Session]] = {
+    Future(Some(User.Session(id = new User.Id(1))))
   }
 
 }

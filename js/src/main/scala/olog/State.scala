@@ -4,7 +4,7 @@ import scala.language.higherKinds
 import autowire._
 import japgolly.scalajs.react._
 import monocle.macros.Lenser
-import olog.Account.{Credentials, Session}
+import olog.User.{Credentials, Session}
 import monocle.macros._
 import monocle.std.option.some
 import org.scalajs.dom.{console}

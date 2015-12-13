@@ -22,24 +22,24 @@ object db {
 
   val xa = DriverManagerTransactor[Task]("org.postgresql.Driver", "jdbc:postgresql:todos", "postgres", "")
 
-  implicit val RoleMeta: Meta[Account.Role] =
+  implicit val RoleMeta: Meta[User.Role] =
     Meta[String].
       nxmap(
-        s => Account.Role.read(s).right.get,
-        role => {println(s"FFFFFF $role");Account.Role.write(role)}
+        s => User.Role.read(s).right.get,
+        role => {println(s"FFFFFF $role");User.Role.write(role)}
       )
 
-  implicit val StatusMeta: Meta[Account.Status] =
+  implicit val StatusMeta: Meta[User.Status] =
     Meta[String].
       nxmap(
-        s => Account.Status.read(s).right.get,
-        status => Account.Status.write(status)
+        s => User.Status.read(s).right.get,
+        status => User.Status.write(status)
       )
 
-  implicit val AccountIdMeta: Meta[Account.Id] =
+  implicit val UserIdMeta: Meta[User.Id] =
     Meta[Int].
       xmap(
-        s => new Account.Id(s),
+        s => new User.Id(s),
         id => id.value
       )
 
@@ -77,20 +77,20 @@ object db {
    */
 
 
-  def fetchThenUpdate(id:Account.Id, upd: Account.Record => Account.Record):Future[Account.Record] =  ???
+  def fetchThenUpdate(id:User.Id, upd: User.Record => User.Record):Future[User.Record] =  ???
 
-  def create(entity:Account.Record):Future[Created[Account.Id]] = ???
+  def create(entity:User.Record):Future[Created[User.Id]] = ???
 
-  def delete(id:Account.Id):Future[Deleted[Account.Record]] = ???
+  def delete(id:User.Id):Future[Deleted[User.Record]] = ???
 
-  def list:Future[List[Account.Record]] =
+  def list:Future[List[User.Record]] =
     sql"select first_name, last_name, id, email, birthday, role, status  from users"
-      .query[Account.Record] // Query0[String]
+      .query[User.Record] // Query0[String]
       .list          // ConnectionIO[List[String]]
       .transact(xa)  // Task[List[String]]
       .runFuture
 
-  def byId(id:Int):Future[Option[Account.Record]] = ???
+  def byId(id:Int):Future[Option[User.Record]] = ???
 
   def all:Future[List[Todo.Item]] =
     sql"select description  from todos"

@@ -46,7 +46,7 @@ object Email {
   }
 }
 
-object Account {
+object User {
 
   sealed trait Account
 
@@ -73,7 +73,7 @@ object Account {
                    status:Status) extends Account
 
   object Record {
-    def dummy():Record =  Record(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = Account.Applied)
+    def dummy():Record =  Record(id = None, firstName = "", lastName = "", email = Email("dummy@gmail.com"), birthday = Date(1l), role = Admin, status = User.Applied)
     val lenser = GenLens[Record]
     val _firstName = lenser(_.firstName)
     val _lastName = lenser(_.lastName)
@@ -91,14 +91,14 @@ object Account {
   }
 
   sealed class Status
-  object Status extends Enum[Status, String] with Converter[Account.Status]{
+  object Status extends Enum[Status, String] with Converter[User.Status]{
     val map:Map[String,Status] = Map("applied" -> Applied, "approved" -> Approved)
   }
   case object Applied extends Status
   case object Approved extends Status
 
   sealed class Role
-  object Role extends Enum[Role, String] with Converter[Account.Role]{
+  object Role extends Enum[Role, String] with Converter[User.Role]{
     val map:Map[String, Role] = Map("admin" -> Admin, "member" -> Member)
   }
   case object Admin extends Role
@@ -131,10 +131,10 @@ object Amazon {
 
 trait Api /*extends Create[User] with Delete[User]*/{
 
-  def users(user:Account.Session): Future[Seq[Account.Info]]
-  def create(entity:Account.Record):Future[Created[Account.Record]]
-  def delete(id:Account.Id):Future[Deleted[Account.Record]]
-  def login(credentials:Account.Credentials):Future[Option[Account.Session]]
+  def users(user:User.Session): Future[Seq[User.Info]]
+  def create(entity:User.Record):Future[Created[User.Record]]
+  def delete(id:User.Id):Future[Deleted[User.Record]]
+  def login(credentials:User.Credentials):Future[Option[User.Session]]
 }
 
 object Todo {

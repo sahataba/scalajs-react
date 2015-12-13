@@ -19,7 +19,7 @@ import scala.language.postfixOps
 
 object Contacts {
 
-  import Account.{Record, Session, Info, Role}
+  import User.{Record, Session, Info, Role}
 
   final case class AppState(user:Session, var users:List[Info]) {
     def createUser(user:Record):Future[Unit] = {
@@ -36,7 +36,7 @@ object Contacts {
     }
   }
 
-  val store = Var(AppState(Session(new Account.Id(1)), List()))
+  val store = Var(AppState(Session(new User.Id(1)), List()))
 
   Client[olog.Api].users(store().user).call().map(_.toList).map{t =>
     store() = store().copy(users = t)
