@@ -36,7 +36,7 @@ object Contacts {
     }
   }
 
-  val store = Var(AppState(Session(Id(1)), List()))
+  val store = Var(AppState(Session(new Account.Id(1)), List()))
 
   Client[olog.Api].users(store().user).call().map(_.toList).map{t =>
     store() = store().copy(users = t)

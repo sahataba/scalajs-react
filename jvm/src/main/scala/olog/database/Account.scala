@@ -1,79 +1,111 @@
 package olog.database
 
 import olog._
-import slick.driver.H2Driver.api._
+import scala.concurrent.{Promise, Future}
+import scalaz.concurrent.{Task}
+import doobie.imports._
 
-import scala.concurrent._
-import Account.{Status, Role}
+object AccountModel {
 
-class Users(tag: Tag) extends TableWithId[Account.User](tag, "USERS") {
-
-  import Columns._
-
-  def firstName = column[String]("FIRST_NAME")
-  def lastName = column[String]("LAST_NAME")
-  def email = column[olog.Email]("EMAIL")
-  def birthday = column[Date]("BIRTHDAY")
-  def role = column[Role]("ROLE")
-  def status = column[Status]("STATUS")
-
-
-  // the * projection (e.g. select * ...) auto-transforms the tupled
-  // column values to / from a User
-
-  def toUser(firstName:String, lastName:String, id:Option[Int], email:Email, birthday:Date, role:Role, status:Status) = {
-    Account.User(
-      id = Some(Id(id.get)),
-      firstName = firstName,
-      lastName = lastName,
-      email = email,
-      birthday = birthday,
-      role = role,
-      status = status
-    )
+  implicit final class TaskExtensionOps[A](x: => Task[A]) {
+    import scalaz.{ \/-, -\/ }
+    val p: Promise[A] = Promise()
+    def runFuture(): Future[A] = {
+      x.runAsync {
+        case -\/(ex) =>
+          p.failure(ex); ()
+        case \/-(r) => p.success(r); ()
+      }
+      p.future
+    }
   }
 
-  val toRecord: Account.User => Option[(String, String, Option[Int], Email, Date, Role, Status)] = user =>
-    Some((
-      user.firstName,
-      user.lastName,
-      user.id.map(_.value),
-      user.email,
-      user.birthday,
-      user.role,
-      user.status
-    ))
+  val xa = DriverManagerTransactor[Task]("org.postgresql.Driver", "jdbc:postgresql:todos", "postgres", "")
 
-  def * = (firstName, lastName, id.?, email, birthday, role, status) <> ((toUser _).tupled, toRecord)
-}
+  implicit val RoleMeta: Meta[Account.Role] =
+    Meta[String].
+      nxmap(
+        s => Account.Role.read(s).right.get,
+        role => {println(s"FFFFFF $role");Account.Role.write(role)}
+      )
 
-// The main application
-object AccountModel extends CRUD[Account.User, Users]{
+  implicit val StatusMeta: Meta[Account.Status] =
+    Meta[String].
+      nxmap(
+        s => Account.Status.read(s).right.get,
+        status => Account.Status.write(status)
+      )
 
-  val profile = slick.driver.H2Driver
+  implicit val AccountIdMeta: Meta[Account.Id] =
+    Meta[Int].
+      xmap(
+        s => new Account.Id(s),
+        id => id.value
+      )
 
-  // The query interface for the Suppliers table
-  val table: TableQuery[Users] = TableQuery[Users]
+  implicit val DateMeta: Meta[Date] =
+    Meta[Long].
+      xmap(
+        s => Date(s),
+        (date:Date) => date.utc
+      )
 
-  lazy val db = Database.forURL("jdbc:h2:mem:hello;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
+  /*
 
-  val createActions = DBIO.seq(
-    table.schema.create,
-    table += Account.User(
-      firstName = "aurelius",
-      lastName = "livingston",
-      email = Email("great road"),
-      birthday = olog.Date(1l),
-      role = Account.Admin,
-      status = Account.Approved)
-  )
+   def create(entity:E):Future[Created[Id[E]]] =
+    (db.run((table returning table.map(_.id)) += entity)).
+      map(a => Created(Id(a)))
 
-  db.run(createActions)
+       val findById = table.findBy(_.id)
 
-  def list2:Future[Seq[Account.User]] = db.run(table.result)
+  def delete(id:Id[E]):Future[Deleted[E]] = {
+    val act =
+      findById(id.value).
+        delete.
+        map(_ => Deleted(id))
+    db.run(act)
+  }
 
-  val byIdActCompiled = Compiled((id:Rep[Int]) => table.filter(_.id === id))
-  def byId(id:Int) = db.run(byIdActCompiled(id).result)
+  def fetchThenUpdate(id:Id[E], upd: E => E):Future[E] =  {
+    val act = for {
+      ent <- findById(id.value).result.head
+      updated = upd(ent)
+      _ <- {println(s"TTT: $updated");findById(id.value).update(updated)}
+    } yield updated
+    db.run(act)
+  }
+   */
+
+
+  def fetchThenUpdate(id:Account.Id, upd: Account.User => Account.User):Future[Account.User] =  ???
+
+  def create(entity:Account.User):Future[Created[Account.Id]] = ???
+
+  def delete(id:Account.Id):Future[Deleted[Account.User]] = ???
+
+  def list:Future[List[Account.User]] =
+    sql"select first_name, last_name, id, email, birthday, role, status  from users"
+      .query[Account.User] // Query0[String]
+      .list          // ConnectionIO[List[String]]
+      .transact(xa)  // Task[List[String]]
+      .runFuture
+
+  def byId(id:Int):Future[Option[Account.User]] = ???
+
+  def all:Future[List[Todo.Item]] =
+    sql"select description  from todos"
+      .query[Todo.Item] // Query0[String]
+      .list          // ConnectionIO[List[String]]
+      .transact(xa)  // Task[List[String]]
+      .runFuture
+
+  def create(description:String):Future[Int] =
+    sql"insert into todos (description) values ($description)"
+      .update
+      .run
+      .transact(xa)
+      .runFuture
+
 
 }
 

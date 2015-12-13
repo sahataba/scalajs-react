@@ -36,7 +36,7 @@ object TodoApp {
 
   }
 
-  val TodoApp = ReactComponentB[Unit]("TodoApp")
+  val component = ReactComponentB[Unit]("TodoApp")
     .initialState(State(Nil, ""))
     .backend(new Backend(_))
     .render((_, S, B) =>
@@ -51,4 +51,6 @@ object TodoApp {
       )
     )
     .buildU
+
+  def apply() = component()
 }

@@ -28,8 +28,8 @@ trait Converter[E] {
 
 }
 
-final case class Id[E](value:Int)
-final case class Deleted[E](id:Id[E])
+final case class DbId[E](value:Int)
+final case class Deleted[E](id:DbId[E])
 final case class Created[E](value:E)
 
 final case class Email(email:String) extends AnyVal
@@ -46,13 +46,15 @@ object Email {
   }
 }
 
-package Account {
+object Account {
 
   sealed trait Account
 
-  final case class Session(id:Id[User]) extends Account
+  type Id = DbId[User]
 
-  final case class Info(id:Id[User],role:Role) extends Account
+  final case class Session(id:Id) extends Account
+
+  final case class Info(id:Id,role:Role) extends Account
   object Info {
     val lenser = GenLens[Info]
     val _role = lenser(_.role)
@@ -64,7 +66,7 @@ package Account {
   final case class User(
                    firstName: String,
                    lastName:String,
-                   id: Option[Id[User]] = None,
+                   id: Option[Id] = None,
                    email:Email,
                    birthday:Date,
                    role:Role,
@@ -113,7 +115,7 @@ trait Create[E] {
 }
 
 trait Delete[E] {
-  def delete(id:Id[E]):Future[Deleted[E]]
+  def delete(id:DbId[E]):Future[Deleted[E]]
 }
 
 trait Query[E] {
@@ -131,7 +133,7 @@ trait Api /*extends Create[User] with Delete[User]*/{
 
   def users(user:Account.Session): Future[Seq[Account.Info]]
   def create(entity:Account.User):Future[Created[Account.User]]
-  def delete(id:Id[Account.User]):Future[Deleted[Account.User]]
+  def delete(id:Account.Id):Future[Deleted[Account.User]]
   def login(credentials:Account.Credentials):Future[Option[Account.Session]]
 }
 

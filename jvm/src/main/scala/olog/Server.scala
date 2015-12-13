@@ -14,6 +14,7 @@ import akka.stream.scaladsl.{Flow, Sink, Source}
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
+import olo.database.SchemaUpdater
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 import pprint.Config.Defaults._
@@ -31,6 +32,8 @@ object AkkaHttpMicroservice extends App with Service {
 
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
+
+  SchemaUpdater.runSchemaUpdate()
 
   Http().bindAndHandle(
     routes,
@@ -82,8 +85,8 @@ trait Service extends Api with TodoApi{
 
   import database.AccountModel
 
-  def users(user:Account.Session): Future[Seq[Account.Info]] = {
-    AccountModel.list2.map(_.map(Account.Info.from))
+  def users(user:Account.Session): Future[List[Account.Info]] = {
+    AccountModel.list.map(_.map(Account.Info.from))
   }
 
   def create(user:Account.User):Future[Created[Account.User]] = {
@@ -93,18 +96,18 @@ trait Service extends Api with TodoApi{
       map(Created(_))
   }
 
-  def delete(id:Id[Account.User]):Future[Deleted[Account.User]] = {
+  def delete(id:Account.Id):Future[Deleted[Account.User]] = {
     AccountModel.delete(id)
   }
 
-  def updateLastname(id:Id[Account.User], lastname:String):Future[Account.User] = {
+  def updateLastname(id:Account.Id, lastname:String):Future[Account.User] = {
     AccountModel.
       fetchThenUpdate(
         id = id,
         upd = Account.User._lastName.set(lastname))
   }
 
-  def approve(id:Id[Account.User]):Future[Account.User] = {
+  def approve(id:Account.Id):Future[Account.User] = {
     AccountModel.
       fetchThenUpdate(
         id,
@@ -113,18 +116,21 @@ trait Service extends Api with TodoApi{
 
   var todos = List[Todo.Item](Todo.Item("ines"))
 
-  def all():Future[Seq[Todo.Item]] = Future {
-    pprint.pprintln(todos, width = 5)
-    todos
-  }
+  def all():Future[Seq[Todo.Item]] =
+    for {
+      accounts <- AccountModel.all
+    } yield {
+      pprint.pprintln(accounts, width = 5)
+      accounts
+    }
 
-  def create(item:Todo.Item):Future[Todo.Item] = Future {
-    todos = item :: todos
-    item
-  }
+  def create(item:Todo.Item):Future[Todo.Item] =
+    for {
+      i <- AccountModel.create(item.description)
+    } yield item
 
   def login(credentials:Account.Credentials):Future[Option[Account.Session]] = {
-    Future(Some(Account.Session(id = Id(1))))
+    Future(Some(Account.Session(id = new Account.Id(1))))
   }
 
 }

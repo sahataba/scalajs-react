@@ -22,12 +22,12 @@ object Pages {
     import dsl._
 
     val privatePages = (emptyRule
-      | staticRoute("#doc", Doco) ~> render(TodoApp.TodoApp())
+      | staticRoute("#doc", Doco) ~> render(TodoApp())
       )
       .addCondition(isUserLoggedIn)(page => redirectToPage(Login)(Redirect.Push))
 
     (trimSlashes
-      | staticRoute(root,     Home) ~> render(<.div(Style.content)("hh"))
+      | staticRoute(root,     Home) ~> render(<.div(Style.content)(TodoApp()))
       | staticRoute("#about", About) ~> render(<.div(AboutPage()))
       | staticRoute("#login", Login) ~> render(<.div(LoginPage()))
       | privatePages
